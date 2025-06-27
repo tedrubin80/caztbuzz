@@ -1,0 +1,41 @@
+# /config/.htaccess
+# Apache configuration to protect the config directory
+
+# Deny all access to this directory
+<RequireAll>
+    Require all denied
+</RequireAll>
+
+# For older Apache versions (2.2 and below)
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Disable script execution
+<FilesMatch "\.(php|pl|py|jsp|asp|sh|cgi)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect specific files
+<Files ~ "\.(env|json|js|config|conf|cfg|ini)$">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Disable .htaccess viewing
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Set security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

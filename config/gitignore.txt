@@ -1,0 +1,134 @@
+# Configuration files with sensitive data
+/config/.env
+/config/*.local.js
+/config/*.local.json
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Build files
+dist/
+build/
+out/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test coverage
+coverage/
+.nyc_output
+
+# Environment files
+.env.test
+.env.production
+.env.development
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Upload directories
+uploads/
+public/uploads/
+
+# Session store
+sessions/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Production files
+*.min.js
+*.min.css
+!*/vendor/**/*.min.js
+!*/vendor/**/*.min.css
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# Documentation build
+docs/_build/
+docs/.doctrees/
+
+# Python (if using any Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# Composer (if using PHP components)
+vendor/
+composer.lock
+
+# Miscellaneous
+.grunt
+.lock-wscript
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Mac finder
+**/.DS_Store
+
+# Ignore all .env files except example
+.env*
+!.env.example
