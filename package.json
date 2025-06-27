@@ -10,7 +10,8 @@
     "migrate": "node scripts/migrate.js",
     "seed": "node scripts/seed.js",
     "backup": "bash scripts/backup-mysql.sh",
-    "generate-password": "node scripts/generate-password.js"
+    "generate-password": "node scripts/generate-password.js",
+    "health": "curl -f http://localhost:${PORT:-3000}/api/health || exit 1"
   },
   "keywords": [
     "podcast",
@@ -33,7 +34,7 @@
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^2.0.0-alpha.6",
     "mysql2": "^3.6.5",
     "nodemailer": "^6.9.7",
     "winston": "^3.11.0"
@@ -43,6 +44,6 @@
     "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   }
 }
