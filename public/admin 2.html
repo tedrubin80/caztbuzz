@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CastBuzz Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root[data-theme="dark"] {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --admin-bg: #0f172a;
+            --admin-card-bg: #1e293b;
+            --admin-border: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --sidebar-bg: #1e293b;
+        }
+
+        :root[data-theme="light"] {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --admin-bg: #f8fafc;
+            --admin-card-bg: #ffffff;
+            --admin-border: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --sidebar-bg: #ffffff;
+        }
+
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background: var(--admin-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--admin-border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .admin-main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+            width: calc(100% - 280px);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--admin-border);
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.25rem 0;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            border: none;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .settings-card, .feed-card, .show-card {
+            background: var(--admin-card-bg);
+            border: 1px solid var(--admin-border);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            background: var(--admin-bg);
+            border: 1px solid var(--admin-border);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--admin-bg);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1050;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--admin-border);
+            background: var(--admin-card-bg);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--admin-card-bg);
+            border: 1px solid var(--admin-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .protocol-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .protocol-option {
+            background: var(--admin-bg);
+            border: 2px solid var(--admin-border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .protocol-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .protocol-option.active {
+            border-color: var(--accent-color);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .preset-btn {
+            background: var(--admin-border);
+            border: 1px solid var(--admin-border);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            margin: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .status-connected { background: var(--accent-color); }
+        .status-disconnected { background: var(--danger-color); }
+        .status-testing { background: var(--warning-color); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .table {
+            background: var(--admin-card-bg);
+            color: var(--text-primary);
+        }
+
+        .table th {
+            border-color: var(--admin-border);
+            color: var(--text-secondary);
+        }
+
+        .table td {
+            border-color: var(--admin-border);
+        }
+
+        .modal-content {
+            background: var(--admin-card-bg);
+            border: 1px solid var(--admin-border);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-color: var(--admin-border);
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .alert {
+            border: 1px solid var(--admin-border);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning-color);
+            color: var(--warning-color);
+        }
+
+        .alert-info {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <div class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <h4 class="mb-0">CastBuzz</h4>
+                <small class="text-muted">Admin Panel</small>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('shows')">
+                            <i class="fas fa-microphone"></i>Shows
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('episodes')">
+                            <i class="fas fa-play-circle"></i>Episodes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('users')">
+                            <i class="fas fa-users"></i>Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('storage')">
+                            <i class="fas fa-cloud"></i>S3 Storage
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('rss')">
+                            <i class="fas fa-rss"></i>RSS Feeds
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('analytics')">
+                            <i class="fas fa-chart-line"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('email')">
+                            <i class="fas fa-envelope"></i>Email Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('settings')">
+                            <i class="fas fa-cog"></i>Settings
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="admin-section active">
+                <h1 class="page-title">
+                    <i class="fas fa-tachometer-alt me-3"></i>Dashboard
+                </h1>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalShows">-</div>
+                        <div class="stat-label">Total Shows</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalEpisodes">-</div>
+                        <div class="stat-label">Published Episodes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalPlays">-</div>
+                        <div class="stat-label">Total Plays</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalUsers">-</div>
+                        <div class="stat-label">Users</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h5>Recent Episodes</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="recentEpisodes">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h5>Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="recentActivity">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shows Section -->
+            <div id="shows" class="admin-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="page-title">
+                        <i class="fas fa-microphone me-3"></i>Shows
+                    </h1>
+                    <button class="btn btn-primary" onclick="openShowModal()">
+                        <i class="fas fa-plus me-2"></i>Add Show
+                    </button>
+                </div>
+                <div id="showsGrid" class="row">
+                    <!-- Shows will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Episodes Section -->
+            <div id="episodes" class="admin-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="page-title">
+                        <i class="fas fa-play-circle me-3"></i>Episodes
+                    </h1>
+                    <button class="btn btn-primary" onclick="openEpisodeModal()">
+                        <i class="fas fa-plus me-2"></i>Add Episode
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Show</th>
+                                <th>Status</th>
+                                <th>Plays</th>
+                                <th>Published</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="episodesTable">
+                            <!-- Episodes will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users" class="admin-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="page-title">
+                        <i class="fas fa-users me-3"></i>Users
+                    </h1>
+                    <button class="btn btn-primary" onclick="openUserModal()">
+                        <i class="fas fa-plus me-2"></i>Add User
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- S3 Storage Section -->
+            <div id="storage" class="admin-section">
+                <h1 class="page-title">
+                    <i class="fas fa-cloud me-3"></i>S3 Storage
+                </h1>
+
+                <div class="settings-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Connection Status</h5>
+                        <div>
+                            <span class="status-indicator" id="s3Status"></span>
+                            <span id="s3StatusText">Checking...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h5>S3 Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="s3ConfigForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Endpoint URL</label>
+                                        <input type="url" class="form-control" id="s3Endpoint" 
+                                               placeholder="https://nyc3.digitaloceanspaces.com" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Region</label>
+                                        <input type="text" class="form-control" id="s3Region" 
+                                               placeholder="us-east-1" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Bucket</label>
+                                        <input type="text" class="form-control" id="s3Bucket" 
+                                               placeholder="my-podcast-bucket" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Access Key</label>
+                                        <input type="text" class="form-control" id="s3AccessKey" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Secret Key</label>
+                                        <input type="password" class="form-control" id="s3SecretKey" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Save Configuration</button>
+                                <button type="button" class="btn btn-info" onclick="testS3Connection()">Test Connection</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RSS Feeds Section -->
+            <div id="rss" class="admin-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="page-title">
+                        <i class="fas fa-rss me-3"></i>RSS Feeds
+                    </h1>
+                    <button class="btn btn-primary" onclick="refreshAllFeeds()">
+                        <i class="fas fa-sync me-2"></i>Refresh All
+                    </button>
+                </div>
+                <div id="rssGrid" class="row">
+                    <!-- RSS feeds will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics" class="admin-section">
+                <h1 class="page-title">
+                    <i class="fas fa-chart-line me-3"></i>Analytics
+                </h1>
+
+                <div class="row mb-4">
+                    <div class="col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-value" id="analyticsPlays">-</div>
+                            <div class="stat-label">Total Plays</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-value" id="analyticsDownloads">-</div>
+                            <div class="stat-label">Downloads</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-value" id="analyticsAvgPlays">-</div>
+                            <div class="stat-label">Avg Plays/Episode</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="stat-card">
+                            <div class="stat-value" id="analyticsActiveEpisodes">-</div>
+                            <div class="stat-label">Active Episodes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h5>Top Episodes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="topEpisodes">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Settings Section -->
+            <div id="email" class="admin-section">
+                <h1 class="page-title">
+                    <i class="fas fa-envelope me-3"></i>Email Configuration
+                </h1>
+
+                <div class="settings-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Connection Status</h5>
+                        <div>
+                            <span class="status-indicator" id="emailStatus"></span>
+                            <span id="emailStatusText">Checking...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card mb-4">
+                    <div class="card-header">
+                        <h5>Email Protocol</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="protocol-selector">
+                            <div class="protocol-option" data-protocol="IMAP" onclick="selectProtocol('IMAP')">
+                                <i class="fas fa-envelope-open fa-2x mb-2"></i>
+                                <h6>IMAP</h6>
+                                <small class="text-muted">Recommended</small>
+                            </div>
+                            <div class="protocol-option" data-protocol="POP" onclick="selectProtocol('POP')">
+                                <i class="fas fa-download fa-2x mb-2"></i>
+                                <h6>POP3</h6>
+                                <small class="text-muted">Download and delete</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card mb-4">
+                    <div class="card-header">
+                        <h5>Quick Setup</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Choose a preset configuration:</p>
+                        <button class="preset-btn" onclick="loadEmailPreset('dreamhost-imap')">DreamHost IMAP</button>
+                        <button class="preset-btn" onclick="loadEmailPreset('dreamhost-pop')">DreamHost POP</button>
+                        <button class="preset-btn" onclick="loadEmailPreset('gmail')">Gmail</button>
+                        <button class="preset-btn" onclick="loadEmailPreset('outlook')">Outlook</button>
+                        <button class="preset-btn" onclick="loadEmailPreset('custom')">Custom</button>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h5>Server Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="emailConfigForm">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email Server Host</label>
+                                        <input type="text" class="form-control" id="emailHost" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Port</label>
+                                        <input type="number" class="form-control" id="emailPort" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="emailUsername" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="emailPassword" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">From Name</label>
+                                        <input type="text" class="form-control" id="fromName" value="CastBuzz" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">From Email</label>
+                                        <input type="email" class="form-control" id="fromEmail" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="emailSecure">
+                                    <label class="form-check-label" for="emailSecure">
+                                        Use SSL/TLS encryption
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Save Configuration</button>
+                                <button type="button" class="btn btn-info" onclick="testEmailConnection()">Test Connection</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings" class="admin-section">
+                <h1 class="page-title">
+                    <i class="fas fa-cog me-3"></i>Settings
+                </h1>
+
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h5>Application Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="settingsForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Site Name</label>
+                                        <input type="text" class="form-control" id="siteName" value="CastBuzz">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Contact Email</label>
+                                        <input type="email" class="form-control" id="contactEmail">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Site Description</label>
+                                <textarea class="form-control" id="siteDescription" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals would go here -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/s3-manager.js"></script>
+    <script>
+        let currentSection = 'dashboard';
+        let selectedProtocol = 'IMAP';
+
+        // Theme management
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.getElementById('themeIcon');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            
+            loadDashboard();
+        });
+
+        // Section navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            currentSection = sectionName;
+            
+            // Load section data
+            switch(sectionName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'shows':
+                    loadShows();
+                    break;
+                case 'episodes':
+                    loadEpisodes();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'storage':
+                    loadS3Config();
+                    break;
+                case 'rss':
+                    loadRSSFeeds();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+                case 'email':
+                    loadEmailConfig();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+            }
+        }
+
+        // Dashboard functions
+        async function loadDashboard() {
+            try {
+                const response = await api.request('/analytics/dashboard');
+                
+                document.getElementById('totalShows').textContent = response.content.total_shows || 0;
+                document.getElementById('totalEpisodes').textContent = response.content.published_episodes || 0;
+                document.getElementById('totalPlays').textContent = response.engagement.total_plays || 0;
+                document.getElementById('totalUsers').textContent = response.users.total_users || 0;
+                
+                // Load recent episodes
+                if (response.recent_activity && response.recent_activity.length > 0) {
+                    document.getElementById('recentEpisodes').innerHTML = response.recent_activity
+                        .slice(0, 5)
+                        .map(episode => `
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <div>
+                                    <strong>${episode.title}</strong>
+                                    <br><small class="text-muted">${episode.show_name}</small>
+                                </div>
+                                <small>${new Date(episode.publish_date).toLocaleDateString()}</small>
+                            </div>
+                        `).join('');
+                } else {
+                    document.getElementById('recentEpisodes').innerHTML = '<p class="text-muted">No recent episodes</p>';
+                }
+                
+                // Load recent activity
+                if (response.recent_activity && response.recent_activity.length > 0) {
+                    document.getElementById('recentActivity').innerHTML = response.recent_activity
+                        .slice(0, 5)
+                        .map(activity => `
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <div>
+                                    <strong>${activity.action}</strong>
+                                    <br><small class="text-muted">${activity.first_name} ${activity.last_name}</small>
+                                </div>
+                                <small>${new Date(activity.created_at).toLocaleDateString()}</small>
+                            </div>
+                        `).join('');
+                } else {
+                    document.getElementById('recentActivity').innerHTML = '<p class="text-muted">No recent activity</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        // Email configuration functions
+        const emailPresets = {
+            'dreamhost-imap': {
+                host: 'imap.dreamhost.com',
+                port: 993,
+                secure: true,
+                protocol: 'IMAP'
+            },
+            'dreamhost-pop': {
+                host: 'pop.dreamhost.com',
+                port: 995,
+                secure: true,
+                protocol: 'POP'
+            },
+            'gmail': {
+                host: 'imap.gmail.com',
+                port: 993,
+                secure: true,
+                protocol: 'IMAP'
+            },
+            'outlook': {
+                host: 'outlook.office365.com',
+                port: 993,
+                secure: true,
+                protocol: 'IMAP'
+            }
+        };
+
+        function selectProtocol(protocol) {
+            selectedProtocol = protocol;
+            
+            document.querySelectorAll('.protocol-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`[data-protocol="${protocol}"]`).classList.add('active');
+            
+            if (protocol === 'IMAP') {
+                document.getElementById('emailPort').value = 993;
+                document.getElementById('emailSecure').checked = true;
+            } else {
+                document.getElementById('emailPort').value = 995;
+                document.getElementById('emailSecure').checked = true;
+            }
+        }
+
+        function loadEmailPreset(presetName) {
+            if (presetName === 'custom') {
+                clearEmailForm();
+                return;
+            }
+
+            const preset = emailPresets[presetName];
+            if (!preset) return;
+
+            document.getElementById('emailHost').value = preset.host;
+            document.getElementById('emailPort').value = preset.port;
+            document.getElementById('emailSecure').checked = preset.secure;
+            
+            selectProtocol(preset.protocol);
+        }
+
+        function clearEmailForm() {
+            document.getElementById('emailHost').value = '';
+            document.getElementById('emailPort').value = '';
+            document.getElementById('emailUsername').value = '';
+            document.getElementById('emailPassword').value = '';
+            document.getElementById('emailSecure').checked = false;
+        }
+
+        async function loadEmailConfig() {
+            try {
+                const response = await api.request('/settings/email');
+                const config = response.email_config;
+
+                if (config.email_host) {
+                    document.getElementById('emailHost').value = config.email_host || '';
+                    document.getElementById('emailPort').value = config.email_port || '';
+                    document.getElementById('emailUsername').value = config.email_username || '';
+                    document.getElementById('fromName').value = config.from_name || 'CastBuzz';
+                    document.getElementById('fromEmail').value = config.from_email || '';
+                    document.getElementById('emailSecure').checked = config.email_secure === 'true';
+                    
+                    updateEmailStatus('connected', 'Email configured');
+                } else {
+                    updateEmailStatus('disconnected', 'Not configured');
+                }
+            } catch (error) {
+                console.error('Failed to load email config:', error);
+                updateEmailStatus('disconnected', 'Configuration error');
+            }
+        }
+
+        function updateEmailStatus(status, text) {
+            const indicator = document.getElementById('emailStatus');
+            const statusText = document.getElementById('emailStatusText');
+            
+            if (indicator && statusText) {
+                indicator.className = `status-indicator status-${status}`;
+                statusText.textContent = text;
+            }
+        }
+
+        async function testEmailConnection() {
+            updateEmailStatus('testing', 'Testing connection...');
+
+            try {
+                const response = await api.request('/settings/email/test', {
+                    method: 'POST'
+                });
+
+                updateEmailStatus('connected', 'Connection successful');
+                showAlert('Email connection successful!', 'success');
+            } catch (error) {
+                updateEmailStatus('disconnected', 'Connection failed');
+                showAlert(`Email connection failed: ${error.message}`, 'danger');
+            }
+        }
+
+        // Placeholder functions for other sections
+        function loadShows() {
+            console.log('Loading shows...');
+        }
+
+        function loadEpisodes() {
+            console.log('Loading episodes...');
+        }
+
+        function loadUsers() {
+            console.log('Loading users...');
+        }
+
+        function loadS3Config() {
+            console.log('Loading S3 config...');
+        }
+
+        function loadRSSFeeds() {
+            console.log('Loading RSS feeds...');
+        }
+
+        function loadAnalytics() {
+            console.log('Loading analytics...');
+        }
+
+        function loadSettings() {
+            console.log('Loading settings...');
+        }
+
+        function openShowModal() {
+            console.log('Open show modal...');
+        }
+
+        function openEpisodeModal() {
+            console.log('Open episode modal...');
+        }
+
+        function openUserModal() {
+            console.log('Open user modal...');
+        }
+
+        function testS3Connection() {
+            console.log('Test S3 connection...');
+        }
+
+        function refreshAllFeeds() {
+            console.log('Refresh all feeds...');
+        }
+
+        // Utility functions
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Form submissions
+        document.getElementById('emailConfigForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const config = {
+                email_host: document.getElementById('emailHost').value,
+                email_port: parseInt(document.getElementById('emailPort').value),
+                email_username: document.getElementById('emailUsername').value,
+                email_password: document.getElementById('emailPassword').value,
+                email_protocol: selectedProtocol,
+                email_secure: document.getElementById('emailSecure').checked,
+                from_name: document.getElementById('fromName').value,
+                from_email: document.getElementById('fromEmail').value
+            };
+
+            try {
+                await api.request('/settings/email', {
+                    method: 'POST',
+                    body: JSON.stringify(config)
+                });
+
+                showAlert('Email configuration saved successfully', 'success');
+                updateEmailStatus('connected', 'Email configured');
+            } catch (error) {
+                showAlert('Failed to save email configuration', 'danger');
+            }
+        });
+
+        // Initialize protocol selection
+        selectProtocol('IMAP');
+    </script>
+</body>
+</html>
