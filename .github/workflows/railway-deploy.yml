@@ -1,0 +1,51 @@
+name: Deploy CastBuzz to Railway
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🛎️ Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: 🏗️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🚂 Install Railway CLI
+      run: npm install -g @railway/cli
+    
+    - name: 🚀 Deploy to Railway
+      run: railway up --service castbuzz-podcast
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    
+    - name: ⚙️ Set Environment Variables
+      run: |
+        railway variables set NODE_ENV=production
+        railway variables set DB_HOST="${{ secrets.DB_HOST }}"
+        railway variables set DB_USER="${{ secrets.DB_USER }}"
+        railway variables set DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+        railway variables set DB_NAME="${{ secrets.DB_NAME }}"
+        railway variables set DB_PORT="${{ secrets.DB_PORT }}"
+        railway variables set JWT_SECRET="${{ secrets.JWT_SECRET }}"
+        railway variables set ADMIN_USERNAME="${{ secrets.ADMIN_USERNAME }}"
+        railway variables set ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
+        railway variables set ENCRYPTION_KEY="${{ secrets.ENCRYPTION_KEY }}"
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    
+    - name: ✅ Deployment Complete
+      run: |
+        echo "🎉 CastBuzz deployed successfully!"
+        echo "🔗 Check your Railway dashboard for the live URL"

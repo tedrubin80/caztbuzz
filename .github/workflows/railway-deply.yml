@@ -1,0 +1,57 @@
+name: RSS Sync Cron Job
+
+on:
+  schedule:
+    # Run every Monday at 6:00 AM UTC (same as Vercel cron)
+    - cron: '0 6 * * 1'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  rss-sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔄 Trigger RSS Sync
+      run: |
+        echo "🚀 Starting RSS sync for CastBuzz..."
+        
+        # Get the app URL from Railway or use environment variable
+        APP_URL="${{ secrets.APP_URL }}"
+        if [ -z "$APP_URL" ]; then
+          echo "❌ APP_URL secret not set. Please add your Railway app URL to GitHub secrets."
+          exit 1
+        fi
+        
+        # Call the RSS sync endpoint
+        response=$(curl -s -w "%{http_code}" \
+          -X POST \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "Content-Type: application/json" \
+          -H "User-Agent: GitHub-Actions-Cron/1.0" \
+          "$APP_URL/api/rss-sync")
+        
+        # Extract HTTP status code
+        http_code="${response: -3}"
+        response_body="${response%???}"
+        
+        echo "📊 HTTP Status: $http_code"
+        echo "📄 Response: $response_body"
+        
+        # Check if successful
+        if [ "$http_code" -eq 200 ]; then
+          echo "✅ RSS sync completed successfully!"
+        else
+          echo "❌ RSS sync failed with status $http_code"
+          echo "Response: $response_body"
+          exit 1
+        fi
+    
+    - name: 📊 Sync Summary
+      if: always()
+      run: |
+        echo "🎙️ CastBuzz RSS Sync Summary:"
+        echo "⏰ Triggered at: $(date -u)"
+        echo "🔗 App URL: ${{ secrets.APP_URL }}"
+        echo "📅 Next sync: Next Monday at 6:00 AM UTC"

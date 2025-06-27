@@ -1,35 +1,17 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+      "source": "/rss/(.*)",
+      "destination": "/api/rss/$1"
     },
     {
-      "src": "public/**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/admin",
+      "destination": "/public/admin.html"
     },
     {
-      "src": "/rss/(.*)",
-      "dest": "/api/rss/$1"
-    },
-    {
-      "src": "/admin",
-      "dest": "/public/admin.html"
-    },
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
+      "source": "/",
+      "destination": "/public/index.html"
     }
   ],
   "crons": [
@@ -38,11 +20,7 @@
       "schedule": "0 6 * * 1"
     }
   ],
-  "env": {
-    "JWT_SECRET": "@jwt-secret",
-    "ADMIN_USERNAME": "@admin-username", 
-    "ADMIN_PASSWORD": "@admin-password",
-    "KV_REST_API_URL": "@kv-rest-api-url",
+": "@kv-rest-api-url",
     "KV_REST_API_TOKEN": "@kv-rest-api-token",
     "ENCRYPTION_KEY": "@encryption-key"
   },

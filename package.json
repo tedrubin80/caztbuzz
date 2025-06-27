@@ -1,31 +1,48 @@
 {
-  "name": "castbuzz-podcast-platform",
+  "name": "castbuzz-admin",
   "version": "1.0.0",
-  "description": "CastBuzz Podcast Network Platform",
-  "type": "module",
+  "description": "CastBuzz Podcast Network Admin Panel with MySQL Backend",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "vercel dev",
-    "build": "echo 'No build step required'",
-    "test": "echo 'No tests specified'"
+    "dev": "nodemon server.js",
+    "test": "jest",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "backup": "bash scripts/backup-mysql.sh",
+    "generate-password": "node scripts/generate-password.js"
   },
   "keywords": [
     "podcast",
-    "rss",
-    "analytics",
+    "admin",
     "mysql",
-    "vercel"
+    "nodejs",
+    "express"
   ],
   "author": "CastBuzz Team",
   "license": "MIT",
   "dependencies": {
-    "mysql2": "^3.6.5",
+    "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2",
     "cors": "^2.8.5",
-    "express-validator": "^7.0.1"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.5",
+    "nodemailer": "^6.9.7",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
   }
 }
