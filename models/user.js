@@ -1,396 +1,31 @@
 // models/User.js
-// Enhanced User model with full authentication and permission support
+// User model for database operations and authentication
 
-const db = require('../lib/database');
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const db = require('../lib/database');
 const config = require('../config/app.config');
 
 class User {
-    static async findByEmail(email) {
-        const sql = `
-            SELECT u.*, GROUP_CONCAT(p.name) as permissions
-            FROM users u
-            LEFT JOIN roles r ON u.role = r.name
-            LEFT JOIN role_permissions rp ON r.id = rp.role_id
-            LEFT JOIN permissions p ON rp.permission_id = p.id
-            WHERE u.email = ?
-            GROUP BY u.id
-        `;
-        
-        const [user] = await db.query(sql, [email]);
-        if (!user) return null;
-        
-        user.permissions = user.permissions ? user.permissions.split(',') : [];
-        return user;
-    }
-    
-    static async findById(id) {
-        return this.getUserWithPermissions(id);
-    }
-    
-    static async getUserWithPermissions(userId) {
-        const sql = `
-            SELECT 
-                u.*,
-                up.timezone, up.language, up.theme, up.notifications, up.dashboard_layout,
-                GROUP_CONCAT(DISTINCT p.name) as permissions,
-                COUNT(DISTINCT us.id) as active_sessions,
-                u2fa.is_enabled as has_2fa
-            FROM users u
-            LEFT JOIN user_preferences up ON u.id = up.user_id
-            LEFT JOIN roles r ON u.role = r.name
-            LEFT JOIN role_permissions rp ON r.id = rp.role_id
-            LEFT JOIN permissions p ON rp.permission_id = p.id
-            LEFT JOIN user_sessions us ON u.id = us.user_id 
-                AND us.last_activity > DATE_SUB(NOW(), INTERVAL 24 HOUR)
-            LEFT JOIN user_2fa u2fa ON u.id = u2fa.user_id
-            WHERE u.id = ? AND u.status = 'active'
-            GROUP BY u.id
-        `;
-        
-        const [user] = await db.query(sql, [userId]);
-        if (!user) return null;
-        
-        user.permissions = user.permissions ? user.permissions.split(',') : [];
-        user.has_2fa = Boolean(user.has_2fa);
-        
-        // Parse JSON fields
-        if (user.notifications) {
-            try {
-                user.notifications = JSON.parse(user.notifications);
-            } catch (e) {
-                user.notifications = { email: true, push: false, desktop: false };
-            }
-        }
-        
-        if (user.dashboard_layout) {
-            try {
-                user.dashboard_layout = JSON.parse(user.dashboard_layout);
-            } catch (e) {
-                user.dashboard_layout = { layout: 'default', widgets: [] };
-            }
-        }
-        
-        return user;
-    }
-    
-    static async create(userData) {
-        const { email, password, firstName, lastName, role = 'viewer' } = userData;
-        
-        const passwordHash = await bcrypt.hash(password, 10);
-        
-        const sql = `
-            INSERT INTO users (email, password_hash, first_name, last_name, role)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        
-        const result = await db.query(sql, [email, passwordHash, firstName, lastName, role]);
-        const userId = result.insertId;
-        
-        // Create default preferences
-        await this.createDefaultPreferences(userId);
-        
-        return this.findById(userId);
-    }
-    
-    static async createDefaultPreferences(userId) {
-        const sql = `
-            INSERT INTO user_preferences (user_id, notifications, dashboard_layout)
-            VALUES (?, ?, ?)
-        `;
-        
-        const defaultNotifications = JSON.stringify({
-            email: true,
-            push: false,
-            desktop: false
-        });
-        
-        const defaultLayout = JSON.stringify({
-            layout: 'default',
-            widgets: ['stats', 'recent_episodes']
-        });
-        
-        await db.query(sql, [userId, defaultNotifications, defaultLayout]);
-    }
-    
-    static async update(id, updateData) {
-        const allowedFields = ['first_name', 'last_name', 'avatar', 'role'];
-        const updates = [];
-        const values = [];
-        
-        for (const [key, value] of Object.entries(updateData)) {
-            if (allowedFields.includes(key)) {
-                updates.push(`${key} = ?`);
-                values.push(value);
-            }
-        }
-        
-        if (updates.length === 0) return false;
-        
-        values.push(id);
-        const sql = `UPDATE users SET ${updates.join(', ')}, updated_at = NOW() WHERE id = ?`;
-        
-        const result = await db.query(sql, values);
-        return result.affectedRows > 0;
-    }
-    
-    static async updatePreferences(userId, preferences) {
-        const sql = `
-            INSERT INTO user_preferences (user_id, timezone, language, theme, notifications, dashboard_layout)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                timezone = VALUES(timezone),
-                language = VALUES(language),
-                theme = VALUES(theme),
-                notifications = VALUES(notifications),
-                dashboard_layout = VALUES(dashboard_layout),
-                updated_at = NOW()
-        `;
-        
-        await db.query(sql, [
-            userId,
-            preferences.timezone || 'UTC',
-            preferences.language || 'en',
-            preferences.theme || 'light',
-            JSON.stringify(preferences.notifications || {}),
-            JSON.stringify(preferences.dashboard_layout || {})
-        ]);
-    }
-    
-    static async delete(id) {
-        const sql = 'UPDATE users SET status = "inactive" WHERE id = ?';
-        const result = await db.query(sql, [id]);
-        return result.affectedRows > 0;
-    }
-    
-    static async authenticate(email, password) {
-        const user = await this.findByEmail(email);
-        if (!user) return null;
-        
-        // Check if account is locked
-        if (user.locked_until && new Date(user.locked_until) > new Date()) {
-            throw new Error('Account is locked. Please try again later.');
-        }
-        
-        // Check password
-        const isValid = await bcrypt.compare(password, user.password_hash);
-        
-        if (!isValid) {
-            // Increment login attempts
-            await this.incrementLoginAttempts(user.id);
-            return null;
-        }
-        
-        // Reset login attempts and update last login
-        await db.query(
-            'UPDATE users SET login_attempts = 0, last_login = NOW(), locked_until = NULL WHERE id = ?',
-            [user.id]
-        );
-        
-        // Remove sensitive data
-        delete user.password_hash;
-        delete user.login_attempts;
-        delete user.locked_until;
-        
-        return user;
-    }
-    
-    static async incrementLoginAttempts(userId) {
-        await db.query(
-            'UPDATE users SET login_attempts = login_attempts + 1 WHERE id = ?',
-            [userId]
-        );
-        
-        // Check if we should lock the account
-        const [user] = await db.query(
-            'SELECT login_attempts FROM users WHERE id = ?',
-            [userId]
-        );
-        
-        if (user && user.login_attempts >= (config.auth?.maxLoginAttempts || 5)) {
-            const lockDuration = config.auth?.lockoutDuration || 30 * 60 * 1000; // 30 minutes
-            const lockUntil = new Date(Date.now() + lockDuration);
-            await db.query(
-                'UPDATE users SET locked_until = ? WHERE id = ?',
-                [lockUntil, userId]
-            );
-        }
-    }
-    
-    static async changePassword(userId, currentPassword, newPassword) {
-        const user = await this.findById(userId);
-        if (!user) return false;
-        
-        // Verify current password
-        const isValid = await bcrypt.compare(currentPassword, user.password_hash);
-        if (!isValid) return false;
-        
-        // Hash new password
-        const newPasswordHash = await bcrypt.hash(newPassword, 10);
-        
-        // Update password
-        const sql = 'UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?';
-        const result = await db.query(sql, [newPasswordHash, userId]);
-        
-        return result.affectedRows > 0;
-    }
-    
-    static async setPasswordResetToken(email, token) {
-        const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-        const sql = `
-            UPDATE users 
-            SET password_reset_token = ?, password_reset_expires = ? 
-            WHERE email = ?
-        `;
-        
-        await db.query(sql, [token, expires, email]);
-    }
-    
-    static async resetPassword(email, newPassword, token) {
-        const sql = `
-            SELECT id, password_reset_token, password_reset_expires 
-            FROM users 
-            WHERE email = ? AND password_reset_token = ?
-        `;
-        
-        const [user] = await db.query(sql, [email, token]);
-        
-        if (!user || new Date() > user.password_reset_expires) {
-            return false;
-        }
-        
-        // Hash new password
-        const passwordHash = await bcrypt.hash(newPassword, 10);
-        
-        // Update password and clear reset token
-        const updateSql = `
-            UPDATE users 
-            SET password_hash = ?, password_reset_token = NULL, password_reset_expires = NULL 
-            WHERE id = ?
-        `;
-        
-        const result = await db.query(updateSql, [passwordHash, user.id]);
-        return result.affectedRows > 0;
-    }
-    
-    static async createApiKey(userId, name, permissions = []) {
-        const keyPrefix = 'cb_' + Math.random().toString(36).substring(7);
-        const fullKey = keyPrefix + '_' + crypto.randomBytes(32).toString('hex');
-        const keyHash = await bcrypt.hash(fullKey, 10);
-        
-        const sql = `
-            INSERT INTO api_keys (user_id, name, key_hash, key_prefix, permissions)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        
-        await db.query(sql, [userId, name, keyHash, keyPrefix, JSON.stringify(permissions)]);
-        
-        // Return full key only once
-        return { key: fullKey, prefix: keyPrefix };
-    }
-    
-    static async validateApiKey(keyPrefix, fullKey) {
-        const sql = `
-            SELECT ak.*, u.id as user_id, u.email, u.role, u.status
-            FROM api_keys ak
-            JOIN users u ON ak.user_id = u.id
-            WHERE ak.key_prefix = ? AND ak.is_active = TRUE AND u.status = 'active'
-        `;
-        
-        const [apiKey] = await db.query(sql, [keyPrefix]);
-        if (!apiKey) return null;
-        
-        // Check if key has expired
-        if (apiKey.expires_at && new Date() > apiKey.expires_at) {
-            return null;
-        }
-        
-        // Verify key hash
-        const isValid = await bcrypt.compare(fullKey, apiKey.key_hash);
-        if (!isValid) return null;
-        
-        // Update last used
-        await db.query('UPDATE api_keys SET last_used = NOW() WHERE id = ?', [apiKey.id]);
-        
-        return {
-            user_id: apiKey.user_id,
-            email: apiKey.email,
-            role: apiKey.role,
-            permissions: JSON.parse(apiKey.permissions || '[]')
-        };
-    }
-    
-    static async registerDevice(userId, deviceId, deviceType, pushToken = null) {
-        const sql = `
-            INSERT INTO user_devices (user_id, device_id, device_type, push_token, last_seen)
-            VALUES (?, ?, ?, ?, NOW())
-            ON DUPLICATE KEY UPDATE
-                push_token = VALUES(push_token),
-                last_seen = NOW(),
-                is_active = TRUE
-        `;
-        
-        await db.query(sql, [userId, deviceId, deviceType, pushToken]);
-    }
-    
-    static async setup2FA(userId, secret) {
-        const sql = `
-            INSERT INTO user_2fa (user_id, secret, backup_codes)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                secret = VALUES(secret),
-                backup_codes = VALUES(backup_codes),
-                is_enabled = FALSE,
-                verified_at = NULL
-        `;
-        
-        // Generate backup codes
-        const backupCodes = Array.from({ length: 10 }, () => 
-            crypto.randomBytes(4).toString('hex').toUpperCase()
-        );
-        
-        await db.query(sql, [userId, secret, JSON.stringify(backupCodes)]);
-        return backupCodes;
-    }
-    
-    static async verify2FA(userId, token) {
-        const speakeasy = require('speakeasy');
-        
-        const sql = 'SELECT secret FROM user_2fa WHERE user_id = ?';
-        const [twoFA] = await db.query(sql, [userId]);
-        
-        if (!twoFA) return false;
-        
-        const verified = speakeasy.totp.verify({
-            secret: twoFA.secret,
-            encoding: 'base32',
-            token: token,
-            window: 1
-        });
-        
-        if (verified) {
-            await db.query(
-                'UPDATE user_2fa SET is_enabled = TRUE, verified_at = NOW() WHERE user_id = ?',
-                [userId]
-            );
-        }
-        
-        return verified;
-    }
-    
-    static async getAllUsers(filters = {}) {
+    static async findAll(filters = {}) {
         let sql = `
-            SELECT u.id, u.email, u.first_name, u.last_name, u.role, u.status, 
-                   u.last_login, u.created_at,
-                   COUNT(DISTINCT us.id) as active_sessions
+            SELECT u.id, u.email, u.first_name, u.last_name, u.role, u.status,
+                   u.email_verified, u.last_login, u.created_at, u.updated_at,
+                   COUNT(DISTINCT s.id) as shows_count,
+                   COUNT(DISTINCT e.id) as episodes_count
             FROM users u
-            LEFT JOIN user_sessions us ON u.id = us.user_id 
-                AND us.last_activity > DATE_SUB(NOW(), INTERVAL 24 HOUR)
+            LEFT JOIN shows s ON u.id = s.created_by
+            LEFT JOIN episodes e ON u.id = e.created_by
         `;
         
         const conditions = [];
         const params = [];
+        
+        if (filters.search) {
+            conditions.push('(u.email LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)');
+            const searchTerm = `%${filters.search}%`;
+            params.push(searchTerm, searchTerm, searchTerm);
+        }
         
         if (filters.role) {
             conditions.push('u.role = ?');
@@ -402,10 +37,9 @@ class User {
             params.push(filters.status);
         }
         
-        if (filters.search) {
-            conditions.push('(u.email LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)');
-            const searchTerm = `%${filters.search}%`;
-            params.push(searchTerm, searchTerm, searchTerm);
+        if (filters.email_verified !== undefined) {
+            conditions.push('u.email_verified = ?');
+            params.push(filters.email_verified);
         }
         
         if (conditions.length > 0) {
@@ -422,33 +56,404 @@ class User {
         return await db.query(sql, params);
     }
     
-    static async logActivity(userId, action, details = {}) {
+    static async findById(id) {
         const sql = `
-            INSERT INTO activity_logs (user_id, action, entity_type, entity_id, details, ip_address, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            SELECT u.id, u.email, u.first_name, u.last_name, u.role, u.status,
+                   u.email_verified, u.last_login, u.created_at, u.updated_at,
+                   COUNT(DISTINCT s.id) as shows_count,
+                   COUNT(DISTINCT e.id) as episodes_count
+            FROM users u
+            LEFT JOIN shows s ON u.id = s.created_by
+            LEFT JOIN episodes e ON u.id = e.created_by
+            WHERE u.id = ?
+            GROUP BY u.id
+        `;
+        
+        const [user] = await db.query(sql, [id]);
+        return user || null;
+    }
+    
+    static async findByEmail(email) {
+        const sql = `
+            SELECT u.*, 
+                   COUNT(DISTINCT s.id) as shows_count,
+                   COUNT(DISTINCT e.id) as episodes_count
+            FROM users u
+            LEFT JOIN shows s ON u.id = s.created_by
+            LEFT JOIN episodes e ON u.id = e.created_by
+            WHERE u.email = ?
+            GROUP BY u.id
+        `;
+        
+        const [user] = await db.query(sql, [email]);
+        return user || null;
+    }
+    
+    static async create(userData) {
+        const {
+            email,
+            password,
+            firstName,
+            lastName,
+            role = 'user'
+        } = userData;
+        
+        // Check if user already exists
+        const existingUser = await this.findByEmail(email);
+        if (existingUser) {
+            throw new Error('User with this email already exists');
+        }
+        
+        // Hash password
+        const passwordHash = await bcrypt.hash(password, config.auth.bcryptRounds);
+        
+        const sql = `
+            INSERT INTO users (email, password_hash, first_name, last_name, role, status, email_verified)
+            VALUES (?, ?, ?, ?, ?, 'active', FALSE)
+        `;
+        
+        const result = await db.query(sql, [
+            email,
+            passwordHash,
+            firstName,
+            lastName,
+            role
+        ]);
+        
+        return await this.findById(result.insertId);
+    }
+    
+    static async update(id, userData) {
+        const updateFields = [];
+        const params = [];
+        
+        if (userData.email) {
+            // Check if email is already taken by another user
+            const existingUser = await this.findByEmail(userData.email);
+            if (existingUser && existingUser.id !== parseInt(id)) {
+                throw new Error('Email is already taken by another user');
+            }
+            updateFields.push('email = ?');
+            params.push(userData.email);
+        }
+        
+        if (userData.firstName) {
+            updateFields.push('first_name = ?');
+            params.push(userData.firstName);
+        }
+        
+        if (userData.lastName) {
+            updateFields.push('last_name = ?');
+            params.push(userData.lastName);
+        }
+        
+        if (userData.role) {
+            updateFields.push('role = ?');
+            params.push(userData.role);
+        }
+        
+        if (userData.status) {
+            updateFields.push('status = ?');
+            params.push(userData.status);
+        }
+        
+        if (userData.emailVerified !== undefined) {
+            updateFields.push('email_verified = ?');
+            params.push(userData.emailVerified);
+        }
+        
+        if (updateFields.length === 0) {
+            throw new Error('No fields to update');
+        }
+        
+        updateFields.push('updated_at = CURRENT_TIMESTAMP');
+        params.push(id);
+        
+        const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`;
+        await db.query(sql, params);
+        
+        return await this.findById(id);
+    }
+    
+    static async updatePassword(id, newPassword) {
+        const passwordHash = await bcrypt.hash(newPassword, config.auth.bcryptRounds);
+        
+        const sql = `
+            UPDATE users 
+            SET password_hash = ?, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        `;
+        
+        await db.query(sql, [passwordHash, id]);
+        return true;
+    }
+    
+    static async delete(id) {
+        // Check if user exists
+        const user = await this.findById(id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        // Check if user has created content
+        if (user.shows_count > 0 || user.episodes_count > 0) {
+            throw new Error('Cannot delete user with existing shows or episodes');
+        }
+        
+        const sql = 'DELETE FROM users WHERE id = ?';
+        await db.query(sql, [id]);
+        
+        return true;
+    }
+    
+    static async authenticate(email, password) {
+        const sql = `
+            SELECT id, email, password_hash, first_name, last_name, role, status, 
+                   email_verified, login_attempts, locked_until
+            FROM users 
+            WHERE email = ?
+        `;
+        
+        const [user] = await db.query(sql, [email]);
+        
+        if (!user) {
+            throw new Error('Invalid email or password');
+        }
+        
+        // Check if account is locked
+        if (user.locked_until && new Date() < new Date(user.locked_until)) {
+            throw new Error('Account is temporarily locked due to too many failed login attempts');
+        }
+        
+        // Check if account is active
+        if (user.status !== 'active') {
+            throw new Error('Account is not active');
+        }
+        
+        // Verify password
+        const isValidPassword = await bcrypt.compare(password, user.password_hash);
+        
+        if (!isValidPassword) {
+            await this.incrementLoginAttempts(user.id);
+            throw new Error('Invalid email or password');
+        }
+        
+        // Reset login attempts on successful login
+        await this.resetLoginAttempts(user.id);
+        await this.updateLastLogin(user.id);
+        
+        // Remove sensitive fields
+        delete user.password_hash;
+        delete user.login_attempts;
+        delete user.locked_until;
+        
+        return user;
+    }
+    
+    static async incrementLoginAttempts(userId) {
+        const sql = `
+            UPDATE users 
+            SET login_attempts = COALESCE(login_attempts, 0) + 1,
+                locked_until = CASE 
+                    WHEN COALESCE(login_attempts, 0) + 1 >= ? 
+                    THEN DATE_ADD(NOW(), INTERVAL ? MICROSECOND)
+                    ELSE NULL 
+                END
+            WHERE id = ?
         `;
         
         await db.query(sql, [
-            userId,
-            action,
-            details.entityType || null,
-            details.entityId || null,
-            JSON.stringify(details.data || {}),
-            details.ipAddress || null,
-            details.userAgent || null
+            config.auth.maxLoginAttempts,
+            config.auth.lockoutDuration * 1000, // Convert to microseconds
+            userId
         ]);
     }
     
-    static async getActivityLog(userId, limit = 50) {
+    static async resetLoginAttempts(userId) {
         const sql = `
-            SELECT action, entity_type, entity_id, details, ip_address, created_at
-            FROM activity_logs
-            WHERE user_id = ?
-            ORDER BY created_at DESC
+            UPDATE users 
+            SET login_attempts = 0, locked_until = NULL 
+            WHERE id = ?
+        `;
+        
+        await db.query(sql, [userId]);
+    }
+    
+    static async updateLastLogin(userId) {
+        const sql = `
+            UPDATE users 
+            SET last_login = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        `;
+        
+        await db.query(sql, [userId]);
+    }
+    
+    static async verifyEmail(userId) {
+        const sql = `
+            UPDATE users 
+            SET email_verified = TRUE, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        `;
+        
+        await db.query(sql, [userId]);
+        return await this.findById(userId);
+    }
+    
+    static generateToken(user) {
+        const payload = {
+            id: user.id,
+            email: user.email,
+            role: user.role
+        };
+        
+        return jwt.sign(payload, config.auth.jwtSecret, {
+            expiresIn: config.auth.jwtExpiry
+        });
+    }
+    
+    static generateRefreshToken(user) {
+        const payload = {
+            id: user.id,
+            type: 'refresh'
+        };
+        
+        return jwt.sign(payload, config.auth.jwtSecret, {
+            expiresIn: config.auth.refreshTokenExpiry
+        });
+    }
+    
+    static verifyToken(token) {
+        return jwt.verify(token, config.auth.jwtSecret);
+    }
+    
+    static async getStats() {
+        const sql = `
+            SELECT 
+                COUNT(*) as total_users,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_users,
+                SUM(CASE WHEN status = 'inactive' THEN 1 ELSE 0 END) as inactive_users,
+                SUM(CASE WHEN email_verified = TRUE THEN 1 ELSE 0 END) as verified_users,
+                SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admin_users,
+                SUM(CASE WHEN role = 'super_admin' THEN 1 ELSE 0 END) as super_admin_users,
+                SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) as users_today,
+                SUM(CASE WHEN DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) as users_this_week,
+                SUM(CASE WHEN DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as users_this_month
+            FROM users
+        `;
+        
+        const [stats] = await db.query(sql);
+        return stats;
+    }
+    
+    static async getRecentUsers(limit = 5) {
+        const sql = `
+            SELECT id, email, first_name, last_name, role, status, created_at
+            FROM users 
+            ORDER BY created_at DESC 
             LIMIT ?
         `;
         
-        return await db.query(sql, [userId, limit]);
+        return await db.query(sql, [limit]);
+    }
+    
+    static async getUsersWithContent() {
+        const sql = `
+            SELECT u.id, u.email, u.first_name, u.last_name, u.role,
+                   COUNT(DISTINCT s.id) as shows_count,
+                   COUNT(DISTINCT e.id) as episodes_count
+            FROM users u
+            LEFT JOIN shows s ON u.id = s.created_by
+            LEFT JOIN episodes e ON u.id = e.created_by
+            GROUP BY u.id
+            HAVING shows_count > 0 OR episodes_count > 0
+            ORDER BY (shows_count + episodes_count) DESC
+        `;
+        
+        return await db.query(sql);
+    }
+    
+    static async changePassword(userId, currentPassword, newPassword) {
+        // Get user with password hash
+        const sql = 'SELECT password_hash FROM users WHERE id = ?';
+        const [user] = await db.query(sql, [userId]);
+        
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        // Verify current password
+        const isValidPassword = await bcrypt.compare(currentPassword, user.password_hash);
+        if (!isValidPassword) {
+            throw new Error('Current password is incorrect');
+        }
+        
+        // Update password
+        await this.updatePassword(userId, newPassword);
+        return true;
+    }
+    
+    static hasPermission(user, permission) {
+        const rolePermissions = {
+            super_admin: ['*'], // All permissions
+            admin: [
+                'view_dashboard',
+                'manage_users',
+                'manage_shows',
+                'manage_episodes',
+                'view_analytics',
+                'manage_settings'
+            ],
+            editor: [
+                'view_dashboard',
+                'manage_shows',
+                'manage_episodes',
+                'view_analytics'
+            ],
+            user: [
+                'view_dashboard'
+            ]
+        };
+        
+        const permissions = rolePermissions[user.role] || [];
+        return permissions.includes('*') || permissions.includes(permission);
+    }
+    
+    static async bulkUpdate(userIds, updateData) {
+        if (!Array.isArray(userIds) || userIds.length === 0) {
+            throw new Error('User IDs must be a non-empty array');
+        }
+        
+        const updateFields = [];
+        const params = [];
+        
+        if (updateData.status) {
+            updateFields.push('status = ?');
+            params.push(updateData.status);
+        }
+        
+        if (updateData.role) {
+            updateFields.push('role = ?');
+            params.push(updateData.role);
+        }
+        
+        if (updateFields.length === 0) {
+            throw new Error('No fields to update');
+        }
+        
+        updateFields.push('updated_at = CURRENT_TIMESTAMP');
+        
+        const placeholders = userIds.map(() => '?').join(',');
+        params.push(...userIds);
+        
+        const sql = `
+            UPDATE users 
+            SET ${updateFields.join(', ')} 
+            WHERE id IN (${placeholders})
+        `;
+        
+        const result = await db.query(sql, params);
+        return result.affectedRows;
     }
 }
 
