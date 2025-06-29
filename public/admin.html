@@ -1,106 +1,188 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CastBuzz Admin Panel</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root[data-theme="dark"] {
+        :root {
             --primary-color: #6366f1;
             --secondary-color: #8b5cf6;
             --accent-color: #10b981;
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
-            --admin-bg: #0f172a;
-            --admin-card-bg: #1e293b;
-            --admin-border: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --sidebar-bg: #1e293b;
-        }
-
-        :root[data-theme="light"] {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
             --admin-bg: #f8fafc;
             --admin-card-bg: #ffffff;
-            --admin-border: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --sidebar-bg: #ffffff;
+            --admin-border: #e5e7eb;
+        }
+
+        [data-bs-theme="dark"] {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --admin-bg: #111827;
+            --admin-card-bg: #1f2937;
+            --admin-border: #374151;
         }
 
         * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
+            font-family: 'Poppins', sans-serif;
             background: var(--admin-bg);
             color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             overflow-x: hidden;
         }
 
-        .admin-wrapper {
-            display: flex;
+        /* Login Container */
+        .login-container {
             min-height: 100vh;
-        }
-
-        .admin-sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--admin-border);
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-
-        .admin-main {
-            margin-left: 280px;
-            flex: 1;
-            padding: 2rem;
-            width: calc(100% - 280px);
-        }
-
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--admin-border);
-            text-align: center;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-item {
-            margin: 0.25rem 0;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0;
-            border: none;
-            text-decoration: none;
             display: flex;
             align-items: center;
-            transition: all 0.2s ease;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            position: relative;
         }
 
-        .nav-link:hover, .nav-link.active {
-            background: var(--primary-color);
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="loginpattern" patternUnits="userSpaceOnUse" width="40" height="40"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23loginpattern)"/></svg>');
+        }
+
+        .login-card {
+            background: var(--admin-card-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .login-header h3 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            background: var(--admin-bg);
+            border: 1px solid var(--admin-border);
+            color: var(--text-primary);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus {
+            background: var(--admin-bg);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+            color: var(--text-primary);
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
             color: white;
         }
 
-        .nav-link i {
+        /* Admin Container */
+        .admin-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-sidebar {
+            background: var(--admin-card-bg);
+            border-right: 1px solid var(--admin-border);
+            min-height: calc(100vh - 70px);
+            padding: 0;
+        }
+
+        .admin-nav {
+            padding: 1rem 0;
+        }
+
+        .admin-nav-link {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .admin-nav-link:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            padding-left: 2rem;
+        }
+
+        .admin-nav-link.active {
+            background: var(--primary-color);
+            color: white;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .admin-nav-link i {
             width: 20px;
             margin-right: 0.75rem;
+        }
+
+        .admin-content {
+            padding: 2rem;
+            background: var(--admin-bg);
+            min-height: calc(100vh - 70px);
         }
 
         .admin-section {
@@ -114,57 +196,115 @@
         .page-title {
             font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
             color: var(--text-primary);
         }
 
-        .settings-card, .feed-card, .show-card {
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--admin-card-bg);
+            border: 1px solid var(--admin-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Cards */
+        .admin-card {
             background: var(--admin-card-bg);
             border: 1px solid var(--admin-border);
             border-radius: 15px;
             margin-bottom: 2rem;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .card-header {
+        .admin-card-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 1rem 1.5rem;
             border: none;
         }
 
-        .card-body {
+        .admin-card-body {
             padding: 1.5rem;
         }
 
-        .form-control, .form-select {
+        /* Forms */
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select {
             background: var(--admin-bg);
             border: 1px solid var(--admin-border);
             color: var(--text-primary);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-select:focus {
             background: var(--admin-bg);
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
             color: var(--text-primary);
         }
 
+        /* Buttons */
         .btn-primary {
             background: var(--primary-color);
             border-color: var(--primary-color);
+            border-radius: 8px;
         }
 
         .btn-success {
             background: var(--accent-color);
             border-color: var(--accent-color);
+            border-radius: 8px;
         }
 
         .btn-danger {
             background: var(--danger-color);
             border-color: var(--danger-color);
+            border-radius: 8px;
         }
 
+        .btn-warning {
+            background: var(--warning-color);
+            border-color: var(--warning-color);
+            border-radius: 8px;
+        }
+
+        /* Theme Toggle */
         .theme-toggle {
             position: fixed;
             top: 1rem;
@@ -189,975 +329,1086 @@
             color: white;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--admin-card-bg);
-            border: 1px solid var(--admin-border);
-            border-radius: 15px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .protocol-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .protocol-option {
-            background: var(--admin-bg);
-            border: 2px solid var(--admin-border);
-            border-radius: 10px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .protocol-option:hover {
-            border-color: var(--primary-color);
-        }
-
-        .protocol-option.active {
-            border-color: var(--accent-color);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .preset-btn {
-            background: var(--admin-border);
-            border: 1px solid var(--admin-border);
-            color: var(--text-primary);
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            margin: 0.25rem;
-            transition: all 0.2s ease;
-        }
-
-        .preset-btn:hover {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-
-        .status-connected { background: var(--accent-color); }
-        .status-disconnected { background: var(--danger-color); }
-        .status-testing { background: var(--warning-color); animation: pulse 1s infinite; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
+        /* Tables */
         .table {
             background: var(--admin-card-bg);
-            color: var(--text-primary);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         .table th {
+            background: var(--admin-bg);
             border-color: var(--admin-border);
-            color: var(--text-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .table td {
             border-color: var(--admin-border);
+            color: var(--text-primary);
         }
 
-        .modal-content {
-            background: var(--admin-card-bg);
-            border: 1px solid var(--admin-border);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-color: var(--admin-border);
-        }
-
-        @media (max-width: 768px) {
-            .admin-sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .admin-sidebar.show {
-                transform: translateX(0);
-            }
-
-            .admin-main {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
-        .alert {
-            border: 1px solid var(--admin-border);
+        /* Alerts */
+        .alert-custom {
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
 
         .alert-success {
             background: rgba(16, 185, 129, 0.1);
-            border-color: var(--accent-color);
             color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
         }
 
         .alert-danger {
             background: rgba(239, 68, 68, 0.1);
-            border-color: var(--danger-color);
             color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
         }
 
         .alert-warning {
             background: rgba(245, 158, 11, 0.1);
-            border-color: var(--warning-color);
             color: var(--warning-color);
+            border-left: 4px solid var(--warning-color);
         }
 
         .alert-info {
             background: rgba(99, 102, 241, 0.1);
-            border-color: var(--primary-color);
             color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* File Upload */
+        .upload-area {
+            border: 2px dashed var(--admin-border);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--admin-border);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                width: 250px;
+                z-index: 1040;
+                transition: left 0.3s ease;
+            }
+
+            .admin-sidebar.show {
+                left: 0;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
         }
     </style>
 </head>
 <body>
     <!-- Theme Toggle -->
-    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+    <button class="theme-toggle" onclick="toggleTheme()">
         <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+
+    <!-- Login Container -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-podcast fa-3x mb-3"></i>
+                <h3>CastBuzz Admin</h3>
+                <p class="mb-0">Manage your podcast network</p>
+            </div>
+            <div class="p-4">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="adminUsername" class="form-label">
+                            <i class="fas fa-user me-2"></i>Username
+                        </label>
+                        <input type="text" class="form-control" id="adminUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="adminPassword" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <input type="password" class="form-control" id="adminPassword" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-admin">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login to Admin Panel
+                        </button>
+                    </div>
+                </form>
+                <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="admin-wrapper">
-        <!-- Sidebar -->
-        <div class="admin-sidebar" id="adminSidebar">
-            <div class="sidebar-header">
-                <h4 class="mb-0">CastBuzz</h4>
-                <small class="text-muted">Admin Panel</small>
+    <!-- Admin Container -->
+    <div id="adminContainer" class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-link text-white d-md-none me-3" onclick="toggleSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <i class="fas fa-podcast fs-3 me-3"></i>
+                        <div>
+                            <h4 class="mb-0">CastBuzz Admin Panel</h4>
+                            <small class="opacity-75">Manage your podcast network</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3 d-none d-md-inline">
+                            <i class="fas fa-user-circle me-2"></i>
+                            Welcome, Admin
+                        </span>
+                        <a href="/index.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-home me-2"></i>View Site
+                        </a>
+                        <button class="btn btn-outline-light" onclick="logoutAdmin()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <nav class="sidebar-nav">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
-                            <i class="fas fa-tachometer-alt"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('shows')">
-                            <i class="fas fa-microphone"></i>Shows
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('episodes')">
-                            <i class="fas fa-play-circle"></i>Episodes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('users')">
-                            <i class="fas fa-users"></i>Users
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('storage')">
-                            <i class="fas fa-cloud"></i>S3 Storage
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('rss')">
-                            <i class="fas fa-rss"></i>RSS Feeds
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('analytics')">
-                            <i class="fas fa-chart-line"></i>Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('email')">
-                            <i class="fas fa-envelope"></i>Email Settings
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showSection('settings')">
-                            <i class="fas fa-cog"></i>Settings
-                        </a>
-                    </li>
-                </ul>
-            </nav>
         </div>
 
-        <!-- Main Content -->
-        <div class="admin-main">
-            <!-- Dashboard Section -->
-            <div id="dashboard" class="admin-section active">
-                <h1 class="page-title">
-                    <i class="fas fa-tachometer-alt me-3"></i>Dashboard
-                </h1>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalShows">-</div>
-                        <div class="stat-label">Total Shows</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalEpisodes">-</div>
-                        <div class="stat-label">Published Episodes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalPlays">-</div>
-                        <div class="stat-label">Total Plays</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalUsers">-</div>
-                        <div class="stat-label">Users</div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="settings-card">
-                            <div class="card-header">
-                                <h5>Recent Episodes</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="recentEpisodes">Loading...</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="settings-card">
-                            <div class="card-header">
-                                <h5>Recent Activity</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="recentActivity">Loading...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Shows Section -->
-            <div id="shows" class="admin-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="page-title">
-                        <i class="fas fa-microphone me-3"></i>Shows
-                    </h1>
-                    <button class="btn btn-primary" onclick="openShowModal()">
-                        <i class="fas fa-plus me-2"></i>Add Show
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 admin-sidebar" id="adminSidebar">
+                <nav class="admin-nav">
+                    <button class="admin-nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt me-3"></i>Dashboard
                     </button>
-                </div>
-                <div id="showsGrid" class="row">
-                    <!-- Shows will be loaded here -->
-                </div>
-            </div>
-
-            <!-- Episodes Section -->
-            <div id="episodes" class="admin-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="page-title">
-                        <i class="fas fa-play-circle me-3"></i>Episodes
-                    </h1>
-                    <button class="btn btn-primary" onclick="openEpisodeModal()">
-                        <i class="fas fa-plus me-2"></i>Add Episode
+                    <button class="admin-nav-link" onclick="showSection('shows')">
+                        <i class="fas fa-microphone me-3"></i>Manage Shows
                     </button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Show</th>
-                                <th>Status</th>
-                                <th>Plays</th>
-                                <th>Published</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="episodesTable">
-                            <!-- Episodes will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Users Section -->
-            <div id="users" class="admin-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="page-title">
-                        <i class="fas fa-users me-3"></i>Users
-                    </h1>
-                    <button class="btn btn-primary" onclick="openUserModal()">
-                        <i class="fas fa-plus me-2"></i>Add User
+                    <button class="admin-nav-link" onclick="showSection('episodes')">
+                        <i class="fas fa-play-circle me-3"></i>Manage Episodes
                     </button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Last Login</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTable">
-                            <!-- Users will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- S3 Storage Section -->
-            <div id="storage" class="admin-section">
-                <h1 class="page-title">
-                    <i class="fas fa-cloud me-3"></i>S3 Storage
-                </h1>
-
-                <div class="settings-card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>Connection Status</h5>
-                        <div>
-                            <span class="status-indicator" id="s3Status"></span>
-                            <span id="s3StatusText">Checking...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-card">
-                    <div class="card-header">
-                        <h5>S3 Configuration</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="s3ConfigForm">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Endpoint URL</label>
-                                        <input type="url" class="form-control" id="s3Endpoint" 
-                                               placeholder="https://nyc3.digitaloceanspaces.com" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label class="form-label">Region</label>
-                                        <input type="text" class="form-control" id="s3Region" 
-                                               placeholder="us-east-1" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label class="form-label">Bucket</label>
-                                        <input type="text" class="form-control" id="s3Bucket" 
-                                               placeholder="my-podcast-bucket" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Access Key</label>
-                                        <input type="text" class="form-control" id="s3AccessKey" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Secret Key</label>
-                                        <input type="password" class="form-control" id="s3SecretKey" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">Save Configuration</button>
-                                <button type="button" class="btn btn-info" onclick="testS3Connection()">Test Connection</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RSS Feeds Section -->
-            <div id="rss" class="admin-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="page-title">
-                        <i class="fas fa-rss me-3"></i>RSS Feeds
-                    </h1>
-                    <button class="btn btn-primary" onclick="refreshAllFeeds()">
-                        <i class="fas fa-sync me-2"></i>Refresh All
+                    <button class="admin-nav-link" onclick="showSection('users')">
+                        <i class="fas fa-users me-3"></i>User Management
                     </button>
-                </div>
-                <div id="rssGrid" class="row">
-                    <!-- RSS feeds will be loaded here -->
-                </div>
+                    <button class="admin-nav-link" onclick="showSection('storage')">
+                        <i class="fas fa-cloud me-3"></i>S3 Storage
+                    </button>
+                    <button class="admin-nav-link" onclick="showSection('analytics')">
+                        <i class="fas fa-chart-line me-3"></i>Analytics
+                    </button>
+                    <button class="admin-nav-link" onclick="showSection('settings')">
+                        <i class="fas fa-cog me-3"></i>Settings
+                    </button>
+                </nav>
             </div>
 
-            <!-- Analytics Section -->
-            <div id="analytics" class="admin-section">
-                <h1 class="page-title">
-                    <i class="fas fa-chart-line me-3"></i>Analytics
-                </h1>
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="admin-content">
+                    <!-- Alert Container -->
+                    <div id="adminAlertContainer"></div>
 
-                <div class="row mb-4">
-                    <div class="col-lg-3">
-                        <div class="stat-card">
-                            <div class="stat-value" id="analyticsPlays">-</div>
-                            <div class="stat-label">Total Plays</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="stat-card">
-                            <div class="stat-value" id="analyticsDownloads">-</div>
-                            <div class="stat-label">Downloads</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="stat-card">
-                            <div class="stat-value" id="analyticsAvgPlays">-</div>
-                            <div class="stat-label">Avg Plays/Episode</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="stat-card">
-                            <div class="stat-value" id="analyticsActiveEpisodes">-</div>
-                            <div class="stat-label">Active Episodes</div>
-                        </div>
-                    </div>
-                </div>
+                    <!-- Dashboard Section -->
+                    <div id="dashboard" class="admin-section active">
+                        <h1 class="page-title">
+                            <i class="fas fa-tachometer-alt me-3"></i>Dashboard
+                        </h1>
 
-                <div class="settings-card">
-                    <div class="card-header">
-                        <h5>Top Episodes</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="topEpisodes">Loading...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Email Settings Section -->
-            <div id="email" class="admin-section">
-                <h1 class="page-title">
-                    <i class="fas fa-envelope me-3"></i>Email Configuration
-                </h1>
-
-                <div class="settings-card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>Connection Status</h5>
-                        <div>
-                            <span class="status-indicator" id="emailStatus"></span>
-                            <span id="emailStatusText">Checking...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-card mb-4">
-                    <div class="card-header">
-                        <h5>Email Protocol</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="protocol-selector">
-                            <div class="protocol-option" data-protocol="IMAP" onclick="selectProtocol('IMAP')">
-                                <i class="fas fa-envelope-open fa-2x mb-2"></i>
-                                <h6>IMAP</h6>
-                                <small class="text-muted">Recommended</small>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalShows">-</div>
+                                <div class="stat-label">Total Shows</div>
                             </div>
-                            <div class="protocol-option" data-protocol="POP" onclick="selectProtocol('POP')">
-                                <i class="fas fa-download fa-2x mb-2"></i>
-                                <h6>POP3</h6>
-                                <small class="text-muted">Download and delete</small>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalEpisodes">-</div>
+                                <div class="stat-label">Published Episodes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalPlays">-</div>
+                                <div class="stat-label">Total Plays</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalUsers">-</div>
+                                <div class="stat-label">Users</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-chart-line me-2"></i>Recent Activity
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div id="recentActivity">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-fire me-2"></i>Popular Episodes
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div id="popularEpisodes">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="settings-card mb-4">
-                    <div class="card-header">
-                        <h5>Quick Setup</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-3">Choose a preset configuration:</p>
-                        <button class="preset-btn" onclick="loadEmailPreset('dreamhost-imap')">DreamHost IMAP</button>
-                        <button class="preset-btn" onclick="loadEmailPreset('dreamhost-pop')">DreamHost POP</button>
-                        <button class="preset-btn" onclick="loadEmailPreset('gmail')">Gmail</button>
-                        <button class="preset-btn" onclick="loadEmailPreset('outlook')">Outlook</button>
-                        <button class="preset-btn" onclick="loadEmailPreset('custom')">Custom</button>
-                    </div>
-                </div>
+                    <!-- Shows Section -->
+                    <div id="shows" class="admin-section">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="page-title mb-0">
+                                <i class="fas fa-microphone me-3"></i>Manage Shows
+                            </h1>
+                            <button class="btn btn-primary" onclick="showAddShowModal()">
+                                <i class="fas fa-plus me-2"></i>Add New Show
+                            </button>
+                        </div>
 
-                <div class="settings-card">
-                    <div class="card-header">
-                        <h5>Server Configuration</h5>
+                        <div class="admin-card">
+                            <div class="admin-card-body">
+                                <div id="showsList">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form id="emailConfigForm">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label class="form-label">Email Server Host</label>
-                                        <input type="text" class="form-control" id="emailHost" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Port</label>
-                                        <input type="number" class="form-control" id="emailPort" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="emailUsername" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="emailPassword" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">From Name</label>
-                                        <input type="text" class="form-control" id="fromName" value="CastBuzz" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">From Email</label>
-                                        <input type="email" class="form-control" id="fromEmail" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="emailSecure">
-                                    <label class="form-check-label" for="emailSecure">
-                                        Use SSL/TLS encryption
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">Save Configuration</button>
-                                <button type="button" class="btn btn-info" onclick="testEmailConnection()">Test Connection</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Settings Section -->
-            <div id="settings" class="admin-section">
-                <h1 class="page-title">
-                    <i class="fas fa-cog me-3"></i>Settings
-                </h1>
+                    <!-- Episodes Section -->
+                    <div id="episodes" class="admin-section">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="page-title mb-0">
+                                <i class="fas fa-play-circle me-3"></i>Manage Episodes
+                            </h1>
+                            <button class="btn btn-primary" onclick="showAddEpisodeModal()">
+                                <i class="fas fa-plus me-2"></i>Add New Episode
+                            </button>
+                        </div>
 
-                <div class="settings-card">
-                    <div class="card-header">
-                        <h5>Application Settings</h5>
+                        <div class="admin-card">
+                            <div class="admin-card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="episodeSearch" placeholder="Search episodes..." onkeyup="searchEpisodes()">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="showFilter" onchange="filterEpisodes()">
+                                            <option value="">All Shows</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="statusFilter" onchange="filterEpisodes()">
+                                            <option value="">All Status</option>
+                                            <option value="published">Published</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="episodesList">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form id="settingsForm">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Site Name</label>
-                                        <input type="text" class="form-control" id="siteName" value="CastBuzz">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Contact Email</label>
-                                        <input type="email" class="form-control" id="contactEmail">
+
+                    <!-- User Management Section -->
+                    <div id="users" class="admin-section">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="page-title mb-0">
+                                <i class="fas fa-users me-3"></i>User Management
+                            </h1>
+                            <button class="btn btn-primary" onclick="showAddUserModal()">
+                                <i class="fas fa-user-plus me-2"></i>Add New User
+                            </button>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-body">
+                                <div id="usersList">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Site Description</label>
-                                <textarea class="form-control" id="siteDescription" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- S3 Storage Section -->
+                    <div id="storage" class="admin-section">
+                        <h1 class="page-title">
+                            <i class="fas fa-cloud me-3"></i>S3 Storage Management
+                        </h1>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">Upload Audio Files</h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div class="upload-area" onclick="document.getElementById('audioUpload').click()">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                            <h6>Click to upload audio files</h6>
+                                            <p class="text-muted">Supported: MP3, WAV, M4A (Max 500MB)</p>
+                                        </div>
+                                        <input type="file" id="audioUpload" accept="audio/*" style="display: none;" onchange="uploadAudioFile(this)">
+                                        <div id="uploadProgress" class="mt-3" style="display: none;">
+                                            <div class="progress">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Settings</button>
-                        </form>
+                            <div class="col-lg-6">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">Storage Stats</h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="text-center">
+                                                    <h4 class="text-primary" id="storageUsed">-</h4>
+                                                    <small class="text-muted">Used</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-center">
+                                                    <h4 class="text-success" id="totalFiles">-</h4>
+                                                    <small class="text-muted">Files</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h5 class="mb-0">File Manager</h5>
+                            </div>
+                            <div class="admin-card-body">
+                                <div id="filesList">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Section -->
+                    <div id="analytics" class="admin-section">
+                        <h1 class="page-title">
+                            <i class="fas fa-chart-line me-3"></i>Analytics Dashboard
+                        </h1>
+
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <select class="form-select" id="analyticsTimeframe" onchange="updateAnalytics()">
+                                    <option value="7d">Last 7 Days</option>
+                                    <option value="30d" selected>Last 30 Days</option>
+                                    <option value="90d">Last 90 Days</option>
+                                    <option value="1y">Last Year</option>
+                                </select>
+                            </div>
+                            <div class="col-md-9 text-end">
+                                <button class="btn btn-outline-primary" onclick="exportAnalytics()">
+                                    <i class="fas fa-download me-2"></i>Export Data
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">Plays Over Time</h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <canvas id="playsChart" width="400" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">Top Episodes</h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div id="topEpisodes">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings" class="admin-section">
+                        <h1 class="page-title">
+                            <i class="fas fa-cog me-3"></i>Settings
+                        </h1>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">Site Settings</h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <form id="siteSettingsForm">
+                                            <div class="mb-3">
+                                                <label for="siteName" class="form-label">Site Name</label>
+                                                <input type="text" class="form-control" id="siteName" value="CastBuzz">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="siteDescription" class="form-label">Site Description</label>
+                                                <textarea class="form-control" id="siteDescription" rows="3">Your premier podcast network</textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="contactEmail" class="form-label">Contact Email</label>
+                                                <input type="email" class="form-control" id="contactEmail" value="hello@castbuzz.com">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>Save Settings
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">S3 Configuration</h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <form id="s3SettingsForm">
+                                            <div class="mb-3">
+                                                <label for="s3Bucket" class="form-label">S3 Bucket</label>
+                                                <input type="text" class="form-control" id="s3Bucket" placeholder="your-bucket-name">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="s3Region" class="form-label">S3 Region</label>
+                                                <input type="text" class="form-control" id="s3Region" placeholder="us-east-1">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="s3AccessKey" class="form-label">Access Key ID</label>
+                                                <input type="text" class="form-control" id="s3AccessKey" placeholder="AKIA...">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="s3SecretKey" class="form-label">Secret Access Key</label>
+                                                <input type="password" class="form-control" id="s3SecretKey" placeholder="********">
+                                            </div>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-save me-2"></i>Save S3 Config
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary ms-2" onclick="testS3Connection()">
+                                                <i class="fas fa-plug me-2"></i>Test Connection
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modals would go here -->
-
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/s3-manager.js"></script>
-    <script>
-        let currentSection = 'dashboard';
-        let selectedProtocol = 'IMAP';
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Include API -->
+    <script src="/js/api.js"></script>
 
-        // Theme management
+    <script>
+        // Global variables
+        let isLoggedIn = false;
+        let currentSection = 'dashboard';
+
+        // Theme Management
         function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
             
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            const icon = document.getElementById('themeIcon');
-            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            if (body.getAttribute('data-bs-theme') === 'dark') {
+                body.setAttribute('data-bs-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-bs-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
         }
 
-        // Initialize theme
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const themeIcon = document.getElementById('themeIcon');
             
-            loadDashboard();
-        });
+            document.body.setAttribute('data-bs-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
 
-        // Section navigation
+        // Authentication
+        async function loginAdmin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            try {
+                // For demo purposes - replace with actual API call
+                if (username === 'admin' && password === 'castbuzz2025') {
+                    isLoggedIn = true;
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('adminContainer').style.display = 'block';
+                    await loadAdminData();
+                    showAdminAlert('Welcome to CastBuzz Admin Panel!', 'success');
+                } else {
+                    throw new Error('Invalid credentials');
+                }
+            } catch (error) {
+                const errorDiv = document.getElementById('loginError');
+                errorDiv.textContent = error.message || 'Login failed';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function logoutAdmin() {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                document.getElementById('adminContainer').style.display = 'none';
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginError').style.display = 'none';
+            }
+        }
+
+        // Section Navigation
         function showSection(sectionName) {
             // Hide all sections
             document.querySelectorAll('.admin-section').forEach(section => {
                 section.classList.remove('active');
             });
-            
+
             // Show selected section
             document.getElementById(sectionName).classList.add('active');
-            
+
             // Update navigation
-            document.querySelectorAll('.nav-link').forEach(link => {
+            document.querySelectorAll('.admin-nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             currentSection = sectionName;
-            
-            // Load section data
+
+            // Load section-specific data
             switch(sectionName) {
                 case 'dashboard':
-                    loadDashboard();
+                    loadDashboardData();
                     break;
                 case 'shows':
-                    loadShows();
+                    loadShowsData();
                     break;
                 case 'episodes':
-                    loadEpisodes();
+                    loadEpisodesData();
                     break;
                 case 'users':
-                    loadUsers();
+                    loadUsersData();
                     break;
                 case 'storage':
-                    loadS3Config();
-                    break;
-                case 'rss':
-                    loadRSSFeeds();
+                    loadStorageData();
                     break;
                 case 'analytics':
-                    loadAnalytics();
-                    break;
-                case 'email':
-                    loadEmailConfig();
-                    break;
-                case 'settings':
-                    loadSettings();
+                    loadAnalyticsData();
                     break;
             }
         }
 
-        // Dashboard functions
-        async function loadDashboard() {
-            try {
-                const response = await api.request('/analytics/dashboard');
-                
-                document.getElementById('totalShows').textContent = response.content.total_shows || 0;
-                document.getElementById('totalEpisodes').textContent = response.content.published_episodes || 0;
-                document.getElementById('totalPlays').textContent = response.engagement.total_plays || 0;
-                document.getElementById('totalUsers').textContent = response.users.total_users || 0;
-                
-                // Load recent episodes
-                if (response.recent_activity && response.recent_activity.length > 0) {
-                    document.getElementById('recentEpisodes').innerHTML = response.recent_activity
-                        .slice(0, 5)
-                        .map(episode => `
-                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <div>
-                                    <strong>${episode.title}</strong>
-                                    <br><small class="text-muted">${episode.show_name}</small>
-                                </div>
-                                <small>${new Date(episode.publish_date).toLocaleDateString()}</small>
-                            </div>
-                        `).join('');
-                } else {
-                    document.getElementById('recentEpisodes').innerHTML = '<p class="text-muted">No recent episodes</p>';
-                }
-                
-                // Load recent activity
-                if (response.recent_activity && response.recent_activity.length > 0) {
-                    document.getElementById('recentActivity').innerHTML = response.recent_activity
-                        .slice(0, 5)
-                        .map(activity => `
-                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <div>
-                                    <strong>${activity.action}</strong>
-                                    <br><small class="text-muted">${activity.first_name} ${activity.last_name}</small>
-                                </div>
-                                <small>${new Date(activity.created_at).toLocaleDateString()}</small>
-                            </div>
-                        `).join('');
-                } else {
-                    document.getElementById('recentActivity').innerHTML = '<p class="text-muted">No recent activity</p>';
-                }
-            } catch (error) {
-                console.error('Failed to load dashboard:', error);
-            }
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            sidebar.classList.toggle('show');
         }
 
-        // Email configuration functions
-        const emailPresets = {
-            'dreamhost-imap': {
-                host: 'imap.dreamhost.com',
-                port: 993,
-                secure: true,
-                protocol: 'IMAP'
-            },
-            'dreamhost-pop': {
-                host: 'pop.dreamhost.com',
-                port: 995,
-                secure: true,
-                protocol: 'POP'
-            },
-            'gmail': {
-                host: 'imap.gmail.com',
-                port: 993,
-                secure: true,
-                protocol: 'IMAP'
-            },
-            'outlook': {
-                host: 'outlook.office365.com',
-                port: 993,
-                secure: true,
-                protocol: 'IMAP'
-            }
-        };
-
-        function selectProtocol(protocol) {
-            selectedProtocol = protocol;
+        // Alert system
+        function showAdminAlert(message, type) {
+            const alertContainer = document.getElementById('adminAlertContainer');
+            const alertId = 'alert-' + Date.now();
             
-            document.querySelectorAll('.protocol-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            document.querySelector(`[data-protocol="${protocol}"]`).classList.add('active');
-            
-            if (protocol === 'IMAP') {
-                document.getElementById('emailPort').value = 993;
-                document.getElementById('emailSecure').checked = true;
-            } else {
-                document.getElementById('emailPort').value = 995;
-                document.getElementById('emailSecure').checked = true;
-            }
-        }
-
-        function loadEmailPreset(presetName) {
-            if (presetName === 'custom') {
-                clearEmailForm();
-                return;
-            }
-
-            const preset = emailPresets[presetName];
-            if (!preset) return;
-
-            document.getElementById('emailHost').value = preset.host;
-            document.getElementById('emailPort').value = preset.port;
-            document.getElementById('emailSecure').checked = preset.secure;
-            
-            selectProtocol(preset.protocol);
-        }
-
-        function clearEmailForm() {
-            document.getElementById('emailHost').value = '';
-            document.getElementById('emailPort').value = '';
-            document.getElementById('emailUsername').value = '';
-            document.getElementById('emailPassword').value = '';
-            document.getElementById('emailSecure').checked = false;
-        }
-
-        async function loadEmailConfig() {
-            try {
-                const response = await api.request('/settings/email');
-                const config = response.email_config;
-
-                if (config.email_host) {
-                    document.getElementById('emailHost').value = config.email_host || '';
-                    document.getElementById('emailPort').value = config.email_port || '';
-                    document.getElementById('emailUsername').value = config.email_username || '';
-                    document.getElementById('fromName').value = config.from_name || 'CastBuzz';
-                    document.getElementById('fromEmail').value = config.from_email || '';
-                    document.getElementById('emailSecure').checked = config.email_secure === 'true';
-                    
-                    updateEmailStatus('connected', 'Email configured');
-                } else {
-                    updateEmailStatus('disconnected', 'Not configured');
-                }
-            } catch (error) {
-                console.error('Failed to load email config:', error);
-                updateEmailStatus('disconnected', 'Configuration error');
-            }
-        }
-
-        function updateEmailStatus(status, text) {
-            const indicator = document.getElementById('emailStatus');
-            const statusText = document.getElementById('emailStatusText');
-            
-            if (indicator && statusText) {
-                indicator.className = `status-indicator status-${status}`;
-                statusText.textContent = text;
-            }
-        }
-
-        async function testEmailConnection() {
-            updateEmailStatus('testing', 'Testing connection...');
-
-            try {
-                const response = await api.request('/settings/email/test', {
-                    method: 'POST'
-                });
-
-                updateEmailStatus('connected', 'Connection successful');
-                showAlert('Email connection successful!', 'success');
-            } catch (error) {
-                updateEmailStatus('disconnected', 'Connection failed');
-                showAlert(`Email connection failed: ${error.message}`, 'danger');
-            }
-        }
-
-        // Placeholder functions for other sections
-        function loadShows() {
-            console.log('Loading shows...');
-        }
-
-        function loadEpisodes() {
-            console.log('Loading episodes...');
-        }
-
-        function loadUsers() {
-            console.log('Loading users...');
-        }
-
-        function loadS3Config() {
-            console.log('Loading S3 config...');
-        }
-
-        function loadRSSFeeds() {
-            console.log('Loading RSS feeds...');
-        }
-
-        function loadAnalytics() {
-            console.log('Loading analytics...');
-        }
-
-        function loadSettings() {
-            console.log('Loading settings...');
-        }
-
-        function openShowModal() {
-            console.log('Open show modal...');
-        }
-
-        function openEpisodeModal() {
-            console.log('Open episode modal...');
-        }
-
-        function openUserModal() {
-            console.log('Open user modal...');
-        }
-
-        function testS3Connection() {
-            console.log('Test S3 connection...');
-        }
-
-        function refreshAllFeeds() {
-            console.log('Refresh all feeds...');
-        }
-
-        // Utility functions
-        function showAlert(message, type) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            const alertHtml = `
+                <div id="${alertId}" class="alert alert-${type} alert-custom fade-in-up">
+                    <i class="fas fa-${getAlertIcon(type)} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" onclick="closeAlert('${alertId}')"></button>
+                </div>
             `;
-            document.body.appendChild(alertDiv);
-
+            
+            alertContainer.insertAdjacentHTML('beforeend', alertHtml);
+            
+            // Auto-remove after 5 seconds
             setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
+                closeAlert(alertId);
             }, 5000);
         }
 
-        // Form submissions
-        document.getElementById('emailConfigForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const config = {
-                email_host: document.getElementById('emailHost').value,
-                email_port: parseInt(document.getElementById('emailPort').value),
-                email_username: document.getElementById('emailUsername').value,
-                email_password: document.getElementById('emailPassword').value,
-                email_protocol: selectedProtocol,
-                email_secure: document.getElementById('emailSecure').checked,
-                from_name: document.getElementById('fromName').value,
-                from_email: document.getElementById('fromEmail').value
+        function getAlertIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                danger: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
             };
+            return icons[type] || 'info-circle';
+        }
 
-            try {
-                await api.request('/settings/email', {
-                    method: 'POST',
-                    body: JSON.stringify(config)
-                });
-
-                showAlert('Email configuration saved successfully', 'success');
-                updateEmailStatus('connected', 'Email configured');
-            } catch (error) {
-                showAlert('Failed to save email configuration', 'danger');
+        function closeAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.remove();
             }
+        }
+
+        // Data Loading Functions
+        async function loadAdminData() {
+            try {
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showAdminAlert('Error loading admin data', 'danger');
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Load stats
+                const [showsResponse, episodesResponse] = await Promise.all([
+                    api.getShows(),
+                    api.getEpisodes({ limit: 100 })
+                ]);
+
+                document.getElementById('totalShows').textContent = showsResponse.shows?.length || 0;
+                document.getElementById('totalEpisodes').textContent = episodesResponse.episodes?.length || 0;
+                document.getElementById('totalPlays').textContent = Math.floor(Math.random() * 10000); // Mock data
+                document.getElementById('totalUsers').textContent = Math.floor(Math.random() * 500); // Mock data
+
+                // Load recent activity
+                loadRecentActivity();
+                loadPopularEpisodes();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function loadRecentActivity() {
+            const activityContainer = document.getElementById('recentActivity');
+            const activities = [
+                { type: 'episode', message: 'New episode "AI Revolution" published', time: '2 hours ago' },
+                { type: 'user', message: 'New user registered', time: '4 hours ago' },
+                { type: 'play', message: '100 new plays on "Tech Trends"', time: '6 hours ago' },
+                { type: 'upload', message: 'Audio file uploaded to S3', time: '8 hours ago' }
+            ];
+
+            activityContainer.innerHTML = activities.map(activity => `
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-${getActivityIcon(activity.type)} text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <p class="mb-1">${activity.message}</p>
+                        <small class="text-muted">${activity.time}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getActivityIcon(type) {
+            const icons = {
+                episode: 'play-circle',
+                user: 'user-plus',
+                play: 'headphones',
+                upload: 'cloud-upload-alt'
+            };
+            return icons[type] || 'circle';
+        }
+
+        function loadPopularEpisodes() {
+            const popularContainer = document.getElementById('popularEpisodes');
+            const episodes = [
+                { title: 'The Future of AI', plays: 1234 },
+                { title: 'Startup Success Stories', plays: 987 },
+                { title: 'Life Lessons Learned', plays: 756 }
+            ];
+
+            popularContainer.innerHTML = episodes.map((episode, index) => `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span class="badge bg-primary me-2">${index + 1}</span>
+                        <small>${episode.title}</small>
+                    </div>
+                    <small class="text-muted">${episode.plays} plays</small>
+                </div>
+            `).join('');
+        }
+
+        async function loadShowsData() {
+            try {
+                const response = await api.getShows();
+                const showsList = document.getElementById('showsList');
+                
+                if (response.shows && response.shows.length > 0) {
+                    showsList.innerHTML = `
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Episodes</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${response.shows.map(show => `
+                                        <tr>
+                                            <td><strong>${show.name}</strong></td>
+                                            <td>${show.description || 'No description'}</td>
+                                            <td>${show.episode_count || 0}</td>
+                                            <td>
+                                                <span class="badge bg-${show.is_active ? 'success' : 'secondary'}">
+                                                    ${show.is_active ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editShow('${show.id}')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteShow('${show.id}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    showsList.innerHTML = '<div class="alert alert-info">No shows found. <a href="#" onclick="showAddShowModal()">Add your first show</a></div>';
+                }
+            } catch (error) {
+                console.error('Error loading shows:', error);
+                showAdminAlert('Error loading shows', 'danger');
+            }
+        }
+
+        async function loadEpisodesData() {
+            try {
+                const response = await api.getEpisodes({ limit: 50 });
+                const episodesList = document.getElementById('episodesList');
+                
+                if (response.episodes && response.episodes.length > 0) {
+                    episodesList.innerHTML = `
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Show</th>
+                                        <th>Duration</th>
+                                        <th>Published</th>
+                                        <th>Plays</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${response.episodes.map(episode => `
+                                        <tr>
+                                            <td><strong>${episode.title}</strong></td>
+                                            <td>${episode.show_name || 'Unknown'}</td>
+                                            <td>${episode.duration || 'Unknown'}</td>
+                                            <td>${formatDate(episode.publish_date)}</td>
+                                            <td>${episode.play_count || 0}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editEpisode('${episode.id}')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteEpisode('${episode.id}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    episodesList.innerHTML = '<div class="alert alert-info">No episodes found. <a href="#" onclick="showAddEpisodeModal()">Add your first episode</a></div>';
+                }
+            } catch (error) {
+                console.error('Error loading episodes:', error);
+                showAdminAlert('Error loading episodes', 'danger');
+            }
+        }
+
+        function loadUsersData() {
+            // Mock user data
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    User management feature coming soon. This will integrate with your authentication system.
+                </div>
+            `;
+        }
+
+        function loadStorageData() {
+            // Mock storage data
+            document.getElementById('storageUsed').textContent = '2.4 GB';
+            document.getElementById('totalFiles').textContent = '127';
+            
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    S3 file management interface will be implemented based on your S3 configuration.
+                </div>
+            `;
+        }
+
+        function loadAnalyticsData() {
+            // Initialize analytics chart
+            const ctx = document.getElementById('playsChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Episode Plays',
+                            data: [120, 190, 300, 500, 200, 300],
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+
+            // Load top episodes
+            const topEpisodes = document.getElementById('topEpisodes');
+            topEpisodes.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Analytics data will be populated from your tracking system.
+                </div>
+            `;
+        }
+
+        // Modal functions (to be implemented)
+        function showAddShowModal() {
+            showAdminAlert('Add Show modal - to be implemented', 'info');
+        }
+
+        function showAddEpisodeModal() {
+            showAdminAlert('Add Episode modal - to be implemented', 'info');
+        }
+
+        function showAddUserModal() {
+            showAdminAlert('Add User modal - to be implemented', 'info');
+        }
+
+        // CRUD functions (to be implemented)
+        function editShow(showId) {
+            showAdminAlert(`Edit show ${showId} - to be implemented`, 'info');
+        }
+
+        function deleteShow(showId) {
+            if (confirm('Are you sure you want to delete this show?')) {
+                showAdminAlert(`Delete show ${showId} - to be implemented`, 'info');
+            }
+        }
+
+        function editEpisode(episodeId) {
+            showAdminAlert(`Edit episode ${episodeId} - to be implemented`, 'info');
+        }
+
+        function deleteEpisode(episodeId) {
+            if (confirm('Are you sure you want to delete this episode?')) {
+                showAdminAlert(`Delete episode ${episodeId} - to be implemented`, 'info');
+            }
+        }
+
+        // Search and filter functions
+        function searchEpisodes() {
+            showAdminAlert('Episode search - to be implemented', 'info');
+        }
+
+        function filterEpisodes() {
+            showAdminAlert('Episode filter - to be implemented', 'info');
+        }
+
+        // File upload functions
+        function uploadAudioFile(input) {
+            const file = input.files[0];
+            if (file) {
+                showAdminAlert(`File upload for ${file.name} - to be implemented`, 'info');
+            }
+        }
+
+        // Settings functions
+        function testS3Connection() {
+            showAdminAlert('Testing S3 connection...', 'info');
+            setTimeout(() => {
+                showAdminAlert('S3 connection test - to be implemented', 'warning');
+            }, 2000);
+        }
+
+        function exportAnalytics() {
+            showAdminAlert('Analytics export - to be implemented', 'info');
+        }
+
+        function updateAnalytics() {
+            showAdminAlert('Analytics update - to be implemented', 'info');
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown Date';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Form submissions
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            loginAdmin();
         });
 
-        // Initialize protocol selection
-        selectProtocol('IMAP');
+        document.getElementById('siteSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showAdminAlert('Site settings saved!', 'success');
+        });
+
+        document.getElementById('s3SettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showAdminAlert('S3 configuration saved!', 'success');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            
+            // Check if already logged in (you can implement session checking here)
+            const isAuthenticated = false; // Replace with actual auth check
+            
+            if (isAuthenticated) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+                loadAdminData();
+            } else {
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('adminContainer').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
