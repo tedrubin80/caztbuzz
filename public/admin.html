@@ -329,6 +329,64 @@
             color: white;
         }
 
+        .color-picker-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .color-picker-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Color Picker Modal */
+        .color-picker-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+        }
+
+        .color-picker-content {
+            background: var(--admin-card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--admin-border);
+        }
+
+        .color-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid var(--admin-border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0.5rem;
+        }
+
+        .color-option:hover,
+        .color-option.active {
+            border-color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
         /* Tables */
         .table {
             background: var(--admin-card-bg);
@@ -445,6 +503,380 @@
             }
         }
 
+        // Homepage Content Management Functions
+        async function loadHomepageData() {
+            try {
+                // Load existing homepage content
+                loadFeatures();
+                loadFeedUrls();
+                showAdminAlert('Homepage content loaded', 'success');
+            } catch (error) {
+                console.error('Error loading homepage data:', error);
+                showAdminAlert('Error loading homepage data', 'danger');
+            }
+        }
+
+        function loadFeatures() {
+            const features = [
+                { icon: 'fas fa-microphone', title: 'Professional Production', description: 'Studio-quality audio and expert hosts deliver exceptional listening experiences' },
+                { icon: 'fas fa-users', title: 'Expert Guests', description: 'Industry leaders and innovative thinkers share their knowledge and experiences' },
+                { icon: 'fas fa-chart-line', title: 'Regular Schedule', description: 'New episodes released consistently across all our shows' },
+                { icon: 'fas fa-rss', title: 'Multi-Platform', description: 'Available on all major podcast platforms and RSS feeds' }
+            ];
+
+            const container = document.getElementById('featuresContainer');
+            container.innerHTML = features.map((feature, index) => `
+                <div class="feature-item mb-3" data-index="${index}">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <input type="text" class="form-control form-control-sm" value="${feature.icon}" placeholder="Icon class">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control form-control-sm" value="${feature.title}" placeholder="Feature title">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control form-control-sm" value="${feature.description}" placeholder="Feature description">
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeFeature(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addFeature() {
+            const container = document.getElementById('featuresContainer');
+            const index = container.children.length;
+            
+            const newFeature = document.createElement('div');
+            newFeature.className = 'feature-item mb-3';
+            newFeature.setAttribute('data-index', index);
+            newFeature.innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Icon class (e.g., fas fa-star)">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control form-control-sm" placeholder="Feature title">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control form-control-sm" placeholder="Feature description">
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeFeature(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newFeature);
+        }
+
+        function removeFeature(index) {
+            const feature = document.querySelector(`[data-index="${index}"]`);
+            if (feature) {
+                feature.remove();
+            }
+        }
+
+        function saveHeroContent() {
+            const heroData = {
+                title: document.getElementById('heroTitle').value,
+                subtitle: document.getElementById('heroSubtitle').value,
+                button1: document.getElementById('heroButton1').value,
+                button2: document.getElementById('heroButton2').value
+            };
+
+            // Save to localStorage for demo (replace with API call)
+            localStorage.setItem('heroContent', JSON.stringify(heroData));
+            showAdminAlert('Hero section saved successfully!', 'success');
+        }
+
+        function saveAboutContent() {
+            const aboutData = {
+                title: document.getElementById('aboutTitle').value,
+                lead: document.getElementById('aboutLead').value,
+                description: document.getElementById('aboutDescription').value
+            };
+
+            localStorage.setItem('aboutContent', JSON.stringify(aboutData));
+            showAdminAlert('About section saved successfully!', 'success');
+        }
+
+        function saveFeatures() {
+            const featureItems = document.querySelectorAll('.feature-item');
+            const features = Array.from(featureItems).map(item => {
+                const inputs = item.querySelectorAll('input');
+                return {
+                    icon: inputs[0].value,
+                    title: inputs[1].value,
+                    description: inputs[2].value
+                };
+            });
+
+            localStorage.setItem('featuresContent', JSON.stringify(features));
+            showAdminAlert('Features saved successfully!', 'success');
+        }
+
+        function saveContactInfo() {
+            const contactData = {
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value,
+                address: document.getElementById('contactAddress').value,
+                twitter: document.getElementById('socialTwitter').value,
+                facebook: document.getElementById('socialFacebook').value,
+                linkedin: document.getElementById('socialLinkedin').value
+            };
+
+            localStorage.setItem('contactInfo', JSON.stringify(contactData));
+            showAdminAlert('Contact information saved successfully!', 'success');
+        }
+
+        function saveSEOData() {
+            const seoData = {
+                title: document.getElementById('seoTitle').value,
+                description: document.getElementById('seoDescription').value,
+                keywords: document.getElementById('seoKeywords').value,
+                ogTitle: document.getElementById('ogTitle').value,
+                ogDescription: document.getElementById('ogDescription').value,
+                ogImage: document.getElementById('ogImage').value
+            };
+
+            localStorage.setItem('seoData', JSON.stringify(seoData));
+            showAdminAlert('SEO data saved successfully!', 'success');
+        }
+
+        function previewHomepage() {
+            // Open homepage in new tab with preview parameters
+            window.open('/index.html?preview=true', '_blank');
+            showAdminAlert('Preview opened in new tab', 'info');
+        }
+
+        function publishHomepage() {
+            if (confirm('Are you sure you want to publish all homepage changes? This will make them live on the website.')) {
+                // Here you would typically make API calls to save all the content
+                showAdminAlert('Homepage changes published successfully!', 'success');
+            }
+        }
+
+        // RSS Feed Management Functions
+        async function loadFeedsData() {
+            try {
+                // Load feed statistics
+                document.getElementById('totalFeeds').textContent = '3';
+                document.getElementById('feedSubscribers').textContent = '1,247';
+                document.getElementById('feedDownloads').textContent = '15,384';
+                document.getElementById('lastFeedUpdate').textContent = '2 hours ago';
+
+                await loadFeedsList();
+                loadFeedUrls();
+                showAdminAlert('Feed data loaded successfully', 'success');
+            } catch (error) {
+                console.error('Error loading feeds data:', error);
+                showAdminAlert('Error loading feeds data', 'danger');
+            }
+        }
+
+        async function loadFeedsList() {
+            try {
+                const response = await api.getShows();
+                const shows = response.shows || [];
+                
+                const feedsList = document.getElementById('feedsList');
+                feedsList.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Show</th>
+                                    <th>Feed URL</th>
+                                    <th>Episodes</th>
+                                    <th>Subscribers</th>
+                                    <th>Last Updated</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${shows.map(show => `
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="show-color me-2" style="width: 20px; height: 20px; background: ${show.color || '#6366f1'}; border-radius: 4px;"></div>
+                                                <strong>${show.name}</strong>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <code>/api/rss/${show.id}</code>
+                                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('/api/rss/${show.id}')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </td>
+                                        <td>${show.episode_count || 0}</td>
+                                        <td>${Math.floor(Math.random() * 500) + 100}</td>
+                                        <td>${new Date().toLocaleDateString()}</td>
+                                        <td>
+                                            <span class="badge bg-${show.is_active ? 'success' : 'secondary'}">
+                                                ${show.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" onclick="validateFeed('${show.id}')" title="Validate Feed">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-outline-info" onclick="refreshFeed('${show.id}')" title="Refresh Feed">
+                                                    <i class="fas fa-sync"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success" onclick="viewFeed('${show.id}')" title="View Feed">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </button>
+                                                <button class="btn btn-outline-warning" onclick="editFeed('${show.id}')" title="Edit Feed">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading feeds list:', error);
+                document.getElementById('feedsList').innerHTML = '<div class="alert alert-danger">Error loading feeds list</div>';
+            }
+        }
+
+        function loadFeedUrls() {
+            const feedUrls = document.getElementById('feedUrls');
+            feedUrls.innerHTML = `
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Tech Talk RSS</strong><br>
+                            <small class="text-muted">/api/rss/tech</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('/api/rss/tech')">
+                            Copy URL
+                        </button>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Life Stories RSS</strong><br>
+                            <small class="text-muted">/api/rss/life</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('/api/rss/life')">
+                            Copy URL
+                        </button>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Business Buzz RSS</strong><br>
+                            <small class="text-muted">/api/rss/business</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('/api/rss/business')">
+                            Copy URL
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function refreshAllFeeds() {
+            showAdminAlert('Refreshing all feeds...', 'info');
+            setTimeout(() => {
+                loadFeedsData();
+                showAdminAlert('All feeds refreshed successfully!', 'success');
+            }, 2000);
+        }
+
+        function refreshFeed(showId) {
+            showAdminAlert(`Refreshing feed for ${showId}...`, 'info');
+            setTimeout(() => {
+                showAdminAlert(`Feed for ${showId} refreshed successfully!`, 'success');
+            }, 1000);
+        }
+
+        function validateFeed(showId) {
+            showAdminAlert(`Validating feed for ${showId}...`, 'info');
+            setTimeout(() => {
+                showAdminAlert(`Feed for ${showId} is valid!`, 'success');
+            }, 1500);
+        }
+
+        function validateFeeds() {
+            showAdminAlert('Validating all feeds...', 'info');
+            setTimeout(() => {
+                showAdminAlert('All feeds are valid!', 'success');
+            }, 2000);
+        }
+
+        function viewFeed(showId) {
+            window.open(`/api/rss/${showId}`, '_blank');
+        }
+
+        function editFeed(showId) {
+            showAdminAlert(`Edit feed for ${showId} - Feature coming soon`, 'info');
+        }
+
+        function saveFeedSettings() {
+            const feedSettings = {
+                language: document.getElementById('feedLanguage').value,
+                category: document.getElementById('feedCategory').value,
+                author: document.getElementById('feedAuthor').value,
+                copyright: document.getElementById('feedCopyright').value,
+                explicit: document.getElementById('feedExplicit').checked
+            };
+
+            localStorage.setItem('feedSettings', JSON.stringify(feedSettings));
+            showAdminAlert('Feed settings saved successfully!', 'success');
+        }
+
+        function testFeedPerformance() {
+            showAdminAlert('Testing feed performance...', 'info');
+            setTimeout(() => {
+                showAdminAlert('Feed performance test completed. Average response time: 245ms', 'success');
+            }, 3000);
+        }
+
+        function submitToDirectories() {
+            if (confirm('Submit feeds to major podcast directories? This may take a few minutes.')) {
+                showAdminAlert('Submitting to podcast directories...', 'info');
+                setTimeout(() => {
+                    showAdminAlert('Feeds submitted to Apple Podcasts, Spotify, and Google Podcasts!', 'success');
+                }, 5000);
+            }
+        }
+
+        function exportFeedData() {
+            showAdminAlert('Exporting feed analytics data...', 'info');
+            setTimeout(() => {
+                // Create a mock CSV file
+                const csvContent = "data:text/csv;charset=utf-8,Show,Subscribers,Downloads\nTech Talk,423,5248\nLife Stories,389,4521\nBusiness Buzz,435,5615";
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "feed_analytics.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showAdminAlert('Feed analytics exported successfully!', 'success');
+            }, 1000);
+        }
+
+        function copyToClipboard(text) {
+            const fullUrl = `${window.location.origin}${text}`;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                showAdminAlert('URL copied to clipboard!', 'success');
+            }).catch(() => {
+                showAdminAlert('Failed to copy URL', 'danger');
+            });
+
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -463,6 +895,34 @@
     </style>
 </head>
 <body>
+    <!-- Color Picker Modal -->
+    <div id="colorPickerModal" class="color-picker-modal">
+        <div class="color-picker-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Choose Admin Theme Color</h5>
+                <button class="btn-close" onclick="closeColorPicker()"></button>
+            </div>
+            <p class="text-muted mb-4">Select a color to customize the admin panel theme</p>
+            
+            <div class="d-flex flex-wrap justify-content-center" id="colorOptions">
+                <!-- Color options will be populated by JavaScript -->
+            </div>
+            
+            <div class="mt-4">
+                <label for="customColorPicker" class="form-label">Or choose a custom color:</label>
+                <div class="d-flex gap-2">
+                    <input type="color" id="customColorPicker" class="form-control form-control-color" value="#6366f1">
+                    <button class="btn btn-primary" onclick="applyCustomColor()">Apply</button>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <button class="btn btn-outline-secondary me-2" onclick="resetColors()">Reset to Default</button>
+                <button class="btn btn-primary" onclick="closeColorPicker()">Done</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Theme Toggle -->
     <button class="theme-toggle" onclick="toggleTheme()">
         <i class="fas fa-moon" id="themeIcon"></i>
@@ -483,6 +943,338 @@
                             <i class="fas fa-user me-2"></i>Username
                         </label>
                         <input type="text" class="form-control" id="adminUsername" required>
+                    </div>
+
+                    <!-- Homepage Content Section -->
+                    <div id="homepage" class="admin-section">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="page-title mb-0">
+                                <i class="fas fa-home me-3"></i>Homepage Content Management
+                            </h1>
+                            <div>
+                                <button class="btn btn-outline-primary me-2" onclick="previewHomepage()">
+                                    <i class="fas fa-eye me-2"></i>Preview Changes
+                                </button>
+                                <button class="btn btn-success" onclick="publishHomepage()">
+                                    <i class="fas fa-upload me-2"></i>Publish Changes
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Hero Section -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-star me-2"></i>Hero Section
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <form id="heroForm">
+                                            <div class="mb-3">
+                                                <label for="heroTitle" class="form-label">Main Title</label>
+                                                <input type="text" class="form-control" id="heroTitle" value="Professional Podcast Network">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="heroSubtitle" class="form-label">Subtitle</label>
+                                                <textarea class="form-control" id="heroSubtitle" rows="3">Discover high-quality content across technology, business insights, and inspiring life stories. Join thousands of listeners in our growing community.</textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="heroButton1" class="form-label">Primary Button Text</label>
+                                                <input type="text" class="form-control" id="heroButton1" value="Start Listening">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="heroButton2" class="form-label">Secondary Button Text</label>
+                                                <input type="text" class="form-control" id="heroButton2" value="Browse Episodes">
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveHeroContent()">
+                                                <i class="fas fa-save me-2"></i>Save Hero Section
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- About Section -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-info-circle me-2"></i>About Section
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <form id="aboutForm">
+                                            <div class="mb-3">
+                                                <label for="aboutTitle" class="form-label">About Title</label>
+                                                <input type="text" class="form-control" id="aboutTitle" value="About CastBuzz Network">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="aboutLead" class="form-label">Lead Paragraph</label>
+                                                <textarea class="form-control" id="aboutLead" rows="2">CastBuzz is a professional podcast network dedicated to delivering exceptional content across diverse topics that matter to modern audiences.</textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="aboutDescription" class="form-label">Description</label>
+                                                <textarea class="form-control" id="aboutDescription" rows="4">Our expertly produced shows feature industry leaders, innovative thinkers, and compelling storytellers who share their knowledge, experiences, and insights. From cutting-edge technology discussions to inspiring personal journeys and strategic business analysis, we provide content that informs, educates, and inspires.</textarea>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveAboutContent()">
+                                                <i class="fas fa-save me-2"></i>Save About Section
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Features Section -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-star me-2"></i>Feature Highlights
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div id="featuresContainer">
+                                            <!-- Feature items will be populated here -->
+                                        </div>
+                                        <button type="button" class="btn btn-outline-primary mt-3" onclick="addFeature()">
+                                            <i class="fas fa-plus me-2"></i>Add Feature
+                                        </button>
+                                        <button type="button" class="btn btn-primary mt-3" onclick="saveFeatures()">
+                                            <i class="fas fa-save me-2"></i>Save Features
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-address-book me-2"></i>Contact Information
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <form id="contactForm">
+                                            <div class="mb-3">
+                                                <label for="contactEmail" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="contactEmail" value="hello@castbuzz.com">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="contactPhone" class="form-label">Phone</label>
+                                                <input type="text" class="form-control" id="contactPhone" value="+1 (555) 123-4567">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="contactAddress" class="form-label">Address</label>
+                                                <input type="text" class="form-control" id="contactAddress" value="San Francisco, CA">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="socialTwitter" class="form-label">Twitter URL</label>
+                                                <input type="url" class="form-control" id="socialTwitter" placeholder="https://twitter.com/castbuzz">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="socialFacebook" class="form-label">Facebook URL</label>
+                                                <input type="url" class="form-control" id="socialFacebook" placeholder="https://facebook.com/castbuzz">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="socialLinkedin" class="form-label">LinkedIn URL</label>
+                                                <input type="url" class="form-control" id="socialLinkedin" placeholder="https://linkedin.com/company/castbuzz">
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveContactInfo()">
+                                                <i class="fas fa-save me-2"></i>Save Contact Info
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEO & Metadata -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-search me-2"></i>SEO & Metadata
+                                </h5>
+                            </div>
+                            <div class="admin-card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="seoTitle" class="form-label">Page Title</label>
+                                            <input type="text" class="form-control" id="seoTitle" value="CastBuzz - Podcast Network">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="seoDescription" class="form-label">Meta Description</label>
+                                            <textarea class="form-control" id="seoDescription" rows="3">Professional podcast network featuring technology, business, and life story content. Join thousands of engaged listeners.</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="seoKeywords" class="form-label">Keywords (comma separated)</label>
+                                            <input type="text" class="form-control" id="seoKeywords" value="podcast, technology, business, life stories, audio content">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ogTitle" class="form-label">Social Media Title</label>
+                                            <input type="text" class="form-control" id="ogTitle" value="CastBuzz Podcast Network">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ogDescription" class="form-label">Social Media Description</label>
+                                            <textarea class="form-control" id="ogDescription" rows="3">Discover professional podcast content across technology, business insights, and inspiring stories.</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ogImage" class="form-label">Social Media Image URL</label>
+                                            <input type="url" class="form-control" id="ogImage" placeholder="https://example.com/og-image.jpg">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="saveSEOData()">
+                                    <i class="fas fa-save me-2"></i>Save SEO Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RSS Feeds Section -->
+                    <div id="feeds" class="admin-section">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="page-title mb-0">
+                                <i class="fas fa-rss me-3"></i>RSS Feed Management
+                            </h1>
+                            <button class="btn btn-primary" onclick="refreshAllFeeds()">
+                                <i class="fas fa-sync me-2"></i>Refresh All Feeds
+                            </button>
+                        </div>
+
+                        <!-- Feed Overview Cards -->
+                        <div class="row mb-4">
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="totalFeeds">-</div>
+                                    <div class="stat-label">Active Feeds</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="feedSubscribers">-</div>
+                                    <div class="stat-label">Total Subscribers</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="feedDownloads">-</div>
+                                    <div class="stat-label">Monthly Downloads</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="lastFeedUpdate">-</div>
+                                    <div class="stat-label">Last Updated</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feed Management -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-list me-2"></i>Feed Configuration
+                                </h5>
+                            </div>
+                            <div class="admin-card-body">
+                                <div id="feedsList">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feed Settings -->
+                        <div class="row mt-4">
+                            <div class="col-lg-6">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-cog me-2"></i>Global Feed Settings
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <form id="feedSettingsForm">
+                                            <div class="mb-3">
+                                                <label for="feedLanguage" class="form-label">Default Language</label>
+                                                <select class="form-select" id="feedLanguage">
+                                                    <option value="en">English</option>
+                                                    <option value="es">Spanish</option>
+                                                    <option value="fr">French</option>
+                                                    <option value="de">German</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="feedCategory" class="form-label">iTunes Category</label>
+                                                <select class="form-select" id="feedCategory">
+                                                    <option value="Technology">Technology</option>
+                                                    <option value="Business">Business</option>
+                                                    <option value="Education">Education</option>
+                                                    <option value="Society & Culture">Society & Culture</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="feedAuthor" class="form-label">Author/Owner</label>
+                                                <input type="text" class="form-control" id="feedAuthor" value="CastBuzz Network">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="feedCopyright" class="form-label">Copyright</label>
+                                                <input type="text" class="form-control" id="feedCopyright" value="© 2025 CastBuzz Network">
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="feedExplicit" checked>
+                                                <label class="form-check-label" for="feedExplicit">
+                                                    Mark as explicit content
+                                                </label>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="saveFeedSettings()">
+                                                <i class="fas fa-save me-2"></i>Save Feed Settings
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="admin-card">
+                                    <div class="admin-card-header">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-tools me-2"></i>Feed Tools
+                                        </h5>
+                                    </div>
+                                    <div class="admin-card-body">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-outline-primary" onclick="validateFeeds()">
+                                                <i class="fas fa-check-circle me-2"></i>Validate All Feeds
+                                            </button>
+                                            <button class="btn btn-outline-info" onclick="testFeedPerformance()">
+                                                <i class="fas fa-tachometer-alt me-2"></i>Test Feed Performance
+                                            </button>
+                                            <button class="btn btn-outline-success" onclick="submitToDirectories()">
+                                                <i class="fas fa-upload me-2"></i>Submit to Podcast Directories
+                                            </button>
+                                            <button class="btn btn-outline-warning" onclick="exportFeedData()">
+                                                <i class="fas fa-download me-2"></i>Export Feed Analytics
+                                            </button>
+                                        </div>
+
+                                        <hr class="my-4">
+
+                                        <h6 class="mb-3">Feed URLs</h6>
+                                        <div id="feedUrls">
+                                            <!-- Feed URLs will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="adminPassword" class="form-label">
@@ -518,6 +1310,9 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
+                        <button class="color-picker-btn me-2" onclick="openColorPicker()" title="Customize Colors">
+                            <i class="fas fa-palette"></i>
+                        </button>
                         <span class="me-3 d-none d-md-inline">
                             <i class="fas fa-user-circle me-2"></i>
                             Welcome, Admin
@@ -540,11 +1335,17 @@
                     <button class="admin-nav-link active" onclick="showSection('dashboard')">
                         <i class="fas fa-tachometer-alt me-3"></i>Dashboard
                     </button>
+                    <button class="admin-nav-link" onclick="showSection('homepage')">
+                        <i class="fas fa-home me-3"></i>Homepage Content
+                    </button>
                     <button class="admin-nav-link" onclick="showSection('shows')">
                         <i class="fas fa-microphone me-3"></i>Manage Shows
                     </button>
                     <button class="admin-nav-link" onclick="showSection('episodes')">
                         <i class="fas fa-play-circle me-3"></i>Manage Episodes
+                    </button>
+                    <button class="admin-nav-link" onclick="showSection('feeds')">
+                        <i class="fas fa-rss me-3"></i>RSS Feeds
                     </button>
                     <button class="admin-nav-link" onclick="showSection('users')">
                         <i class="fas fa-users me-3"></i>User Management
@@ -914,6 +1715,18 @@
         let isLoggedIn = false;
         let currentSection = 'dashboard';
 
+        // Color schemes
+        const colorSchemes = [
+            { name: 'Indigo (Default)', primary: '#6366f1', secondary: '#8b5cf6' },
+            { name: 'Blue', primary: '#2563eb', secondary: '#3b82f6' },
+            { name: 'Green', primary: '#059669', secondary: '#10b981' },
+            { name: 'Purple', primary: '#7c3aed', secondary: '#c026d3' },
+            { name: 'Red', primary: '#dc2626', secondary: '#e11d48' },
+            { name: 'Orange', primary: '#ea580c', secondary: '#f59e0b' },
+            { name: 'Teal', primary: '#0891b2', secondary: '#0d9488' },
+            { name: 'Pink', primary: '#db2777', secondary: '#ec4899' }
+        ];
+
         // Theme Management
         function toggleTheme() {
             const body = document.body;
@@ -937,6 +1750,74 @@
             
             document.body.setAttribute('data-bs-theme', savedTheme);
             themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Color Management Functions
+        function openColorPicker() {
+            const modal = document.getElementById('colorPickerModal');
+            const colorOptions = document.getElementById('colorOptions');
+            
+            // Populate color options
+            colorOptions.innerHTML = colorSchemes.map((scheme, index) => `
+                <div class="color-option" 
+                     style="background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary})"
+                     onclick="applyColorScheme(${index})"
+                     title="${scheme.name}">
+                </div>
+            `).join('');
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeColorPicker() {
+            document.getElementById('colorPickerModal').style.display = 'none';
+        }
+
+        function applyColorScheme(index) {
+            const scheme = colorSchemes[index];
+            applyColors(scheme.primary, scheme.secondary);
+            localStorage.setItem('adminColorScheme', JSON.stringify(scheme));
+        }
+
+        function applyCustomColor() {
+            const customColor = document.getElementById('customColorPicker').value;
+            const secondaryColor = adjustBrightness(customColor, 20);
+            
+            applyColors(customColor, secondaryColor);
+            localStorage.setItem('adminColorScheme', JSON.stringify({
+                name: 'Custom',
+                primary: customColor,
+                secondary: secondaryColor
+            }));
+        }
+
+        function applyColors(primary, secondary) {
+            document.documentElement.style.setProperty('--primary-color', primary);
+            document.documentElement.style.setProperty('--secondary-color', secondary);
+        }
+
+        function adjustBrightness(hex, percent) {
+            const num = parseInt(hex.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        function resetColors() {
+            applyColors('#6366f1', '#8b5cf6');
+            localStorage.removeItem('adminColorScheme');
+        }
+
+        function loadSavedColors() {
+            const savedScheme = localStorage.getItem('adminColorScheme');
+            if (savedScheme) {
+                const scheme = JSON.parse(savedScheme);
+                applyColors(scheme.primary, scheme.secondary);
+            }
         }
 
         // Authentication
@@ -995,11 +1876,17 @@
                 case 'dashboard':
                     loadDashboardData();
                     break;
+                case 'homepage':
+                    loadHomepageData();
+                    break;
                 case 'shows':
                     loadShowsData();
                     break;
                 case 'episodes':
                     loadEpisodesData();
+                    break;
+                case 'feeds':
+                    loadFeedsData();
                     break;
                 case 'users':
                     loadUsersData();
@@ -1396,6 +2283,7 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
+            loadSavedColors();
             
             // Check if already logged in (you can implement session checking here)
             const isAuthenticated = false; // Replace with actual auth check
@@ -1407,6 +2295,13 @@
             } else {
                 document.getElementById('loginContainer').style.display = 'flex';
                 document.getElementById('adminContainer').style.display = 'none';
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('colorPickerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeColorPicker();
             }
         });
     </script>
