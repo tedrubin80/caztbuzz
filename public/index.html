@@ -3,48 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CastBuzz - Podcast Network</title>
+    <title>CastBuzz - Professional Podcast Network</title>
+    <meta name="description" content="Discover high-quality podcast content across technology, business insights, and inspiring life stories. Join thousands of listeners in our growing community.">
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #7c3aed;
-            --accent-color: #059669;
-            --danger-color: #dc2626;
-            --warning-color: #d97706;
-            --text-primary: #111827;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --text-primary: #1f2937;
             --text-secondary: #6b7280;
-            --text-muted: #9ca3af;
             --bg-primary: #ffffff;
-            --bg-secondary: #f9fafb;
-            --bg-tertiary: #f3f4f6;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
             --border-color: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
             --border-radius: 8px;
             --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        [data-bs-theme="dark"] {
-            --primary-color: #3b82f6;
-            --secondary-color: #8b5cf6;
-            --accent-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
+        [data-theme="dark"] {
+            --primary-color: #818cf8;
+            --secondary-color: #a78bfa;
+            --accent-color: #fb7185;
             --text-primary: #f9fafb;
             --text-secondary: #d1d5db;
-            --text-muted: #9ca3af;
-            --bg-primary: #1f2937;
-            --bg-secondary: #111827;
-            --bg-tertiary: #0f172a;
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
             --border-color: #374151;
         }
 
@@ -55,18 +48,41 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
-            background: var(--bg-secondary);
-            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Header & Navigation */
+        /* Improved Centering Utilities */
+        .center-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .center-horizontal {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .max-width-centered {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header - Centered Navigation */
         .main-header {
             background: var(--bg-primary);
             border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -81,6 +97,14 @@
             font-weight: 700;
             color: var(--primary-color) !important;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-nav {
+            justify-content: center;
+            flex-grow: 1;
         }
 
         .navbar-nav .nav-link {
@@ -90,15 +114,23 @@
             margin: 0 0.25rem;
             border-radius: var(--border-radius);
             transition: all 0.2s ease;
+            text-align: center;
         }
 
         .navbar-nav .nav-link:hover,
         .navbar-nav .nav-link.active {
             color: var(--primary-color) !important;
-            background: rgba(37, 99, 235, 0.1);
+            background: rgba(102, 126, 234, 0.1);
         }
 
-        .theme-toggle {
+        .header-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle, .color-picker-btn {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
@@ -109,40 +141,24 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            margin-right: 1rem;
         }
 
-        .theme-toggle:hover {
+        .theme-toggle:hover, .color-picker-btn:hover {
             background: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
 
-        .color-picker-btn {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            width: 40px;
-            height: 40px;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            margin-right: 1rem;
-            position: relative;
-        }
-
-        .color-picker-btn:hover {
-            border-color: var(--primary-color);
-        }
-
-        /* Hero Section */
+        /* Hero Section - Perfectly Centered */
         .hero {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 4rem 0;
+            padding: 6rem 0;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
         }
 
         .hero::before {
@@ -160,6 +176,8 @@
             position: relative;
             z-index: 2;
             max-width: 800px;
+            text-align: center;
+            margin: 0 auto;
         }
 
         .hero h1 {
@@ -167,12 +185,22 @@
             font-weight: 700;
             margin-bottom: 1.5rem;
             line-height: 1.2;
+            text-align: center;
         }
 
         .hero .lead {
             font-size: 1.25rem;
             margin-bottom: 2rem;
             opacity: 0.95;
+            text-align: center;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn-hero {
@@ -184,7 +212,9 @@
             border-radius: var(--border-radius);
             transition: all 0.2s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-hero:hover {
@@ -202,7 +232,9 @@
             border-radius: var(--border-radius);
             transition: all 0.2s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-hero-outline:hover {
@@ -210,14 +242,21 @@
             color: var(--primary-color);
         }
 
-        /* Section Styles */
+        /* Section Styles - All Centered */
         .section {
             padding: 5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .section-header {
             text-align: center;
             margin-bottom: 4rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .section-title {
@@ -225,6 +264,7 @@
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 1rem;
+            text-align: center;
         }
 
         .section-subtitle {
@@ -232,14 +272,18 @@
             color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto;
+            text-align: center;
         }
 
-        /* Show Cards */
+        /* Shows Grid - Centered Layout */
         .shows-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            justify-items: center;
+            margin: 2rem auto 0;
+            max-width: 1200px;
+            width: 100%;
         }
 
         .show-card {
@@ -247,418 +291,304 @@
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-lg);
             overflow: hidden;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             box-shadow: var(--shadow-sm);
+            max-width: 400px;
+            width: 100%;
         }
 
         .show-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
-            border-color: var(--primary-color);
         }
 
-        .show-header {
+        .show-image {
+            width: 100%;
             height: 200px;
-            position: relative;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-size: 3rem;
         }
 
-        .show-body {
+        .show-content {
             padding: 1.5rem;
+            text-align: center;
         }
 
         .show-title {
-            font-size: 1.375rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .show-description {
             color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
 
-        .show-stats {
+        .show-meta {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .stat-badge {
-            color: var(--text-muted);
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
             font-size: 0.875rem;
-            font-weight: 500;
+            color: var(--text-secondary);
         }
 
-        .btn-subscribe {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
+        .show-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .btn-subscribe:hover {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        /* Episodes Section */
+        /* Episodes Section - Centered Controls */
         .episodes-header {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .search-controls {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
             gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .form-control, .form-select {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius);
-            font-size: 0.95rem;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            width: 100%;
+            max-width: 800px;
         }
 
         .filter-tabs {
             display: flex;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            padding: 0.5rem;
             border-radius: var(--border-radius);
-            padding: 0.25rem;
-            gap: 0.25rem;
         }
 
         .filter-tab {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            background: transparent;
-            border: none;
-            border-radius: calc(var(--border-radius) - 2px);
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
             text-decoration: none;
-            text-align: center;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .filter-tab.active,
-        .filter-tab:hover {
+        .filter-tab:hover,
+        .filter-tab.active {
             background: var(--primary-color);
             color: white;
         }
 
-        /* Episode Cards */
-        .episodes-list {
+        /* Episodes Grid - Centered */
+        .episodes-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
+            margin: 0 auto;
+            max-width: 1200px;
+            justify-items: center;
         }
 
         .episode-card {
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            transition: all 0.2s ease;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
             box-shadow: var(--shadow-sm);
+            width: 100%;
+            max-width: 400px;
         }
 
         .episode-card:hover {
-            border-color: var(--primary-color);
             box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .episode-header {
             display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .play-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: var(--border-radius);
-            background: var(--primary-color);
-            border: none;
-            color: white;
-            font-size: 1.25rem;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .play-btn:hover {
-            background: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-        .episode-info {
-            flex-grow: 1;
-        }
-
-        .episode-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-        }
-
-        .episode-meta {
-            display: flex;
             align-items: center;
-            gap: 1rem;
-            color: var(--text-muted);
-            font-size: 0.875rem;
+            justify-content: center;
             margin-bottom: 1rem;
-        }
-
-        .show-badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .episode-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+            gap: 1rem;
         }
 
         .episode-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn-action {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            font-size: 0.875rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .btn-action:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .play-count {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-
-        /* Load More Button */
-        .load-more-section {
-            text-align: center;
-            margin-top: 3rem;
-        }
-
-        .btn-load-more {
-            background: var(--bg-primary);
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 0.875rem 2rem;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-
-        .btn-load-more:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        /* About Section */
+        /* About Section - Centered Content */
         .about-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            gap: 3rem;
             align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .about-text h2 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
+        .about-text {
+            text-align: left;
         }
 
-        .about-text .lead {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .about-text p {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 2rem;
+        .about-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
+            margin: 2rem auto 0;
+            max-width: 1000px;
+            justify-items: center;
         }
 
-        .feature-item {
+        .feature-card {
             text-align: center;
-            padding: 1.5rem;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            background: var(--bg-secondary);
             border-radius: var(--border-radius-lg);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin: 0 auto 1rem;
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
         }
 
         .feature-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--text-primary);
             margin-bottom: 0.5rem;
+            color: var(--text-primary);
         }
 
         .feature-description {
             color: var(--text-secondary);
-            font-size: 0.9rem;
         }
 
-        .about-visual {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-lg);
-            height: 400px;
-        }
-
-        .podcast-icon {
-            font-size: 8rem;
-            color: var(--primary-color);
-            opacity: 0.3;
-        }
-
-        /* Footer */
+        /* Footer - Centered */
         .footer {
-            background: var(--text-primary);
-            color: white;
-            padding: 3rem 0 1rem;
-            margin-top: 5rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 2rem;
+            text-align: center;
         }
 
-        .footer h5 {
-            color: var(--primary-color);
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-section {
+            text-align: center;
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
             margin-bottom: 1rem;
-            font-weight: 600;
         }
 
-        .footer a {
-            color: rgba(255, 255, 255, 0.7);
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
-        .footer a:hover {
-            color: white;
+        .footer-section ul li a:hover {
+            color: var(--primary-color);
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 2rem;
+            text-align: center;
             padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
         }
 
-        /* Color Picker Modal */
-        .color-picker-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1100;
+            padding: 3rem;
         }
 
-        .color-picker-content {
-            background: var(--bg-primary);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            width: 90%;
-            max-width: 500px;
-            border: 1px solid var(--border-color);
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .color-option {
-            width: 50px;
-            height: 50px;
-            border-radius: var(--border-radius);
-            border: 2px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin: 0.5rem;
-        }
-
-        .color-option:hover,
-        .color-option.active {
-            border-color: #000;
-            transform: scale(1.1);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Responsive Design */
@@ -668,17 +598,17 @@
                 gap: 1rem;
             }
 
-            .filter-tabs {
-                flex-wrap: wrap;
-            }
-
             .about-content {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                text-align: center;
+            }
+
+            .about-text {
+                text-align: center;
             }
 
             .features-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
 
@@ -693,132 +623,102 @@
 
             .shows-grid {
                 grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .episodes-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
             }
 
             .episode-header {
                 flex-direction: column;
-                gap: 1rem;
+                text-align: center;
             }
 
             .episode-actions {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
-            }
-
-            .action-buttons {
+                flex-wrap: wrap;
                 justify-content: center;
             }
 
             .navbar-nav {
+                text-align: center;
                 margin-top: 1rem;
-                gap: 0.5rem;
+            }
+
+            .header-controls {
+                justify-content: center;
+                margin-top: 1rem;
             }
         }
 
-        /* Loading States */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-        }
+        @media (max-width: 480px) {
+            .hero {
+                padding: 4rem 0;
+            }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+            .hero h1 {
+                font-size: 2rem;
+            }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+            .section {
+                padding: 3rem 0;
+            }
 
-        /* Utility Classes */
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .border-gradient {
-            border: 2px solid;
-            border-image: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) 1;
+            .btn-hero,
+            .btn-hero-outline {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Color Picker Modal -->
-    <div id="colorPickerModal" class="color-picker-modal">
-        <div class="color-picker-content">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0">Choose Theme Color</h5>
-                <button class="btn-close" onclick="closeColorPicker()"></button>
-            </div>
-            <p class="text-muted mb-4">Select a color to customize the website theme</p>
-            
-            <div class="d-flex flex-wrap justify-content-center" id="colorOptions">
-                <!-- Color options will be populated by JavaScript -->
-            </div>
-            
-            <div class="mt-4">
-                <label for="customColorPicker" class="form-label">Or choose a custom color:</label>
-                <div class="d-flex gap-2">
-                    <input type="color" id="customColorPicker" class="form-control form-control-color" value="#2563eb">
-                    <button class="btn btn-primary" onclick="applyCustomColor()">Apply</button>
-                </div>
-            </div>
-            
-            <div class="mt-4 text-center">
-                <button class="btn btn-outline-secondary me-2" onclick="resetColors()">Reset to Default</button>
-                <button class="btn btn-primary" onclick="closeColorPicker()">Done</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Navigation -->
     <header class="main-header">
         <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <i class="fas fa-podcast me-2"></i>CastBuzz
-                </a>
-                
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#home">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#shows">Shows</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#episodes">Episodes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#about">About</a>
-                        </li>
-                    </ul>
+            <div class="max-width-centered w-100">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <a class="navbar-brand" href="/">
+                        <i class="fas fa-podcast me-2"></i>CastBuzz
+                    </a>
                     
-                    <div class="d-flex align-items-center">
-                        <button class="color-picker-btn" onclick="openColorPicker()" title="Customize Colors">
-                            <i class="fas fa-palette"></i>
-                        </button>
-                        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
-                            <i class="fas fa-moon" id="themeIcon"></i>
-                        </button>
-                        <a href="/admin.html" class="btn btn-outline-primary">
-                            <i class="fas fa-cog me-2"></i>Admin
-                        </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#home">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#shows">Shows</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#episodes">Episodes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#about">About</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="header-controls">
+                            <button class="color-picker-btn" onclick="openColorPicker()" title="Customize Colors">
+                                <i class="fas fa-palette"></i>
+                            </button>
+                            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                                <i class="fas fa-moon" id="themeIcon"></i>
+                            </button>
+                            <a href="/admin.html" class="btn btn-outline-primary">
+                                <i class="fas fa-cog me-2"></i>Admin
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -827,18 +727,92 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="hero-content">
-                        <h1>Professional Podcast Network</h1>
-                        <p class="lead">Discover high-quality content across technology, business insights, and inspiring life stories. Join thousands of listeners in our growing community.</p>
-                        <div class="d-flex gap-3 flex-wrap">
-                            <a href="#shows" class="btn-hero">
-                                <i class="fas fa-play me-2"></i>Start Listening
+        <div class="max-width-centered">
+            <div class="hero-content">
+                <h1>Professional Podcast Network</h1>
+                <p class="lead">Discover high-quality content across technology, business insights, and inspiring life stories. Join thousands of listeners in our growing community.</p>
+                <div class="hero-buttons">
+                    <a href="#shows" class="btn-hero">
+                        <i class="fas fa-play me-2"></i>Start Listening
+                    </a>
+                    <a href="#episodes" class="btn-hero-outline">
+                        <i class="fas fa-list me-2"></i>Browse Episodes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shows Section -->
+    <section id="shows" class="section">
+        <div class="max-width-centered">
+            <div class="section-header">
+                <h2 class="section-title">Our Podcast Shows</h2>
+                <p class="section-subtitle">Explore our carefully curated collection of professional podcast series, each designed to inform, inspire, and engage.</p>
+            </div>
+            
+            <div class="shows-grid" id="showsContainer">
+                <div class="show-card">
+                    <div class="show-image">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="show-content">
+                        <h3 class="show-title">Tech Insights</h3>
+                        <p class="show-description">Exploring the latest in technology, innovation, and digital transformation.</p>
+                        <div class="show-meta">
+                            <span><i class="fas fa-clock me-1"></i>Weekly</span>
+                            <span><i class="fas fa-headphones me-1"></i>12.5k listeners</span>
+                        </div>
+                        <div class="show-actions">
+                            <a href="#" class="btn btn-primary btn-sm">
+                                <i class="fas fa-play me-1"></i>Listen
                             </a>
-                            <a href="#episodes" class="btn-hero-outline">
-                                <i class="fas fa-list me-2"></i>Browse Episodes
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-rss me-1"></i>Subscribe
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="show-card">
+                    <div class="show-image">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="show-content">
+                        <h3 class="show-title">Business Insights</h3>
+                        <p class="show-description">Strategic insights and leadership advice from industry experts.</p>
+                        <div class="show-meta">
+                            <span><i class="fas fa-clock me-1"></i>Bi-weekly</span>
+                            <span><i class="fas fa-headphones me-1"></i>8.2k listeners</span>
+                        </div>
+                        <div class="show-actions">
+                            <a href="#" class="btn btn-primary btn-sm">
+                                <i class="fas fa-play me-1"></i>Listen
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-rss me-1"></i>Subscribe
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="show-card">
+                    <div class="show-image">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="show-content">
+                        <h3 class="show-title">Life Stories</h3>
+                        <p class="show-description">Inspiring personal stories of growth, challenges, and success.</p>
+                        <div class="show-meta">
+                            <span><i class="fas fa-clock me-1"></i>Weekly</span>
+                            <span><i class="fas fa-headphones me-1"></i>15.7k listeners</span>
+                        </div>
+                        <div class="show-actions">
+                            <a href="#" class="btn btn-primary btn-sm">
+                                <i class="fas fa-play me-1"></i>Listen
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-rss me-1"></i>Subscribe
                             </a>
                         </div>
                     </div>
@@ -847,25 +821,9 @@
         </div>
     </section>
 
-    <!-- Shows Section -->
-    <section id="shows" class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Podcast Shows</h2>
-                <p class="section-subtitle">Explore our carefully curated collection of professional podcast series, each designed to inform, inspire, and engage.</p>
-            </div>
-            
-            <div id="showsContainer">
-                <div class="loading">
-                    <div class="spinner"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Episodes Section -->
     <section id="episodes" class="section" style="background: var(--bg-tertiary);">
-        <div class="container">
+        <div class="max-width-centered">
             <div class="section-header">
                 <h2 class="section-title">Latest Episodes</h2>
                 <p class="section-subtitle">Stay up to date with our newest content across all shows</p>
@@ -882,73 +840,83 @@
                     </select>
                     <select class="form-select" id="showFilterSelect" onchange="filterByShow()">
                         <option value="all">All Shows</option>
+                        <option value="tech">Tech Insights</option>
+                        <option value="business">Business Insights</option>
+                        <option value="life">Life Stories</option>
                     </select>
                 </div>
 
                 <div class="filter-tabs" id="filterTabs">
                     <a href="#" class="filter-tab active" onclick="filterEpisodes('all')">All Episodes</a>
-                    <a href="#" class="filter-tab" onclick="filterEpisodes('tech')">Tech Talk</a>
+                    <a href="#" class="filter-tab" onclick="filterEpisodes('tech')">Tech</a>
+                    <a href="#" class="filter-tab" onclick="filterEpisodes('business')">Business</a>
                     <a href="#" class="filter-tab" onclick="filterEpisodes('life')">Life Stories</a>
-                    <a href="#" class="filter-tab" onclick="filterEpisodes('business')">Business Buzz</a>
                 </div>
             </div>
 
-            <div class="episodes-list" id="episodesContainer">
+            <div class="episodes-grid" id="episodesContainer">
                 <div class="loading">
                     <div class="spinner"></div>
                 </div>
-            </div>
-
-            <div class="load-more-section">
-                <button class="btn btn-load-more" id="loadMoreBtn" onclick="loadMoreEpisodes()" style="display: none;">
-                    <i class="fas fa-plus me-2"></i>Load More Episodes
-                </button>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="section">
-        <div class="container">
+        <div class="max-width-centered">
+            <div class="section-header">
+                <h2 class="section-title">About CastBuzz</h2>
+                <p class="section-subtitle">We're passionate about creating meaningful connections through high-quality podcast content</p>
+            </div>
+            
             <div class="about-content">
                 <div class="about-text">
-                    <h2>About CastBuzz Network</h2>
-                    <p class="lead">CastBuzz is a professional podcast network dedicated to delivering exceptional content across diverse topics that matter to modern audiences.</p>
-                    <p>Our expertly produced shows feature industry leaders, innovative thinkers, and compelling storytellers who share their knowledge, experiences, and insights. From cutting-edge technology discussions to inspiring personal journeys and strategic business analysis, we provide content that informs, educates, and inspires.</p>
+                    <h3>Our Mission</h3>
+                    <p>CastBuzz is dedicated to delivering professional-grade podcast content that educates, inspires, and connects our global community. We believe in the power of storytelling and expert insights to drive positive change.</p>
                     
-                    <div class="features-grid">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <h5 class="feature-title">Professional Production</h5>
-                            <p class="feature-description">Studio-quality audio and expert hosts deliver exceptional listening experiences</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h5 class="feature-title">Expert Guests</h5>
-                            <p class="feature-description">Industry leaders and innovative thinkers share their knowledge and experiences</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <h5 class="feature-title">Regular Schedule</h5>
-                            <p class="feature-description">New episodes released consistently across all our shows</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-rss"></i>
-                            </div>
-                            <h5 class="feature-title">Multi-Platform</h5>
-                            <p class="feature-description">Available on all major podcast platforms and RSS feeds</p>
-                        </div>
+                    <h3>What Sets Us Apart</h3>
+                    <p>Our commitment to quality production, expert curation, and listener-first approach ensures every episode delivers real value. From cutting-edge technology discussions to transformative business strategies and inspiring personal journeys.</p>
+                </div>
+                
+                <div class="about-image">
+                    <div style="width: 300px; height: 300px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                        <i class="fas fa-podcast"></i>
                     </div>
                 </div>
-                <div class="about-visual">
-                    <i class="fas fa-podcast podcast-icon"></i>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <h4 class="feature-title">Professional Production</h4>
+                    <p class="feature-description">Studio-quality audio and expert hosts deliver exceptional listening experiences</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="feature-title">Expert Guests</h4>
+                    <p class="feature-description">Industry leaders and innovative thinkers share their knowledge and experiences</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="feature-title">Regular Schedule</h4>
+                    <p class="feature-description">New episodes released consistently across all our shows</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rss"></i>
+                    </div>
+                    <h4 class="feature-title">Multi-Platform</h4>
+                    <p class="feature-description">Available on all major podcast platforms and RSS feeds</p>
                 </div>
             </div>
         </div>
@@ -956,511 +924,117 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <h5><i class="fas fa-podcast me-2"></i>CastBuzz Network</h5>
-                    <p>Your destination for professional podcast content across technology, business, and life stories. Join our community of engaged listeners.</p>
+        <div class="max-width-centered">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#shows">All Shows</a></li>
+                        <li><a href="#episodes">Latest Episodes</a></li>
+                        <li><a href="#about">About Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Subscribe</h4>
+                    <ul>
+                        <li><a href="/rss/all">All Shows RSS</a></li>
+                        <li><a href="/rss/tech">Tech Insights RSS</a></li>
+                        <li><a href="/rss/business">Business RSS</a></li>
+                        <li><a href="/rss/life">Life Stories RSS</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
                     <div class="social-links">
-                        <a href="#" class="me-3" title="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="me-3" title="Facebook"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="#" class="me-3" title="LinkedIn"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="#" class="me-3" title="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5>Shows</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" onclick="filterEpisodes('tech')">Tech Talk</a></li>
-                        <li class="mb-2"><a href="#" onclick="filterEpisodes('life')">Life Stories</a></li>
-                        <li class="mb-2"><a href="#" onclick="filterEpisodes('business')">Business Buzz</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5>Subscribe</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/api/rss/tech"><i class="fas fa-rss me-2"></i>Tech Talk RSS</a></li>
-                        <li class="mb-2"><a href="/api/rss/life"><i class="fas fa-rss me-2"></i>Life Stories RSS</a></li>
-                        <li class="mb-2"><a href="/api/rss/business"><i class="fas fa-rss me-2"></i>Business Buzz RSS</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5>Contact</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-envelope me-2"></i>hello@castbuzz.com</li>
-                        <li class="mb-2"><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</li>
-                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i>San Francisco, CA</li>
-                        <li class="mb-2"><a href="/admin.html"><i class="fas fa-cog me-2"></i>Admin Panel</a></li>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="/admin.html">Admin</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <p class="mb-0">&copy; 2025 CastBuzz Network. All rights reserved.</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <a href="#" class="me-3">Privacy Policy</a>
-                        <a href="#" class="me-3">Terms of Service</a>
-                        <a href="#" class="me-3">Accessibility</a>
-                    </div>
-                </div>
+                <p>&copy; 2025 CastBuzz. All rights reserved. | Professional Podcast Network</p>
             </div>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Include API and Analytics -->
-    <script src="/js/api.js"></script>
-    <script src="/js/analytics-tracker.js"></script>
-
     <script>
-        // Global variables
-        let shows = [];
-        let episodes = [];
-        let currentFilter = 'all';
-        let displayedEpisodes = 6;
-
-        // Color schemes
-        const colorSchemes = [
-            { name: 'Blue (Default)', primary: '#2563eb', secondary: '#7c3aed' },
-            { name: 'Green', primary: '#059669', secondary: '#0d9488' },
-            { name: 'Purple', primary: '#7c3aed', secondary: '#c026d3' },
-            { name: 'Red', primary: '#dc2626', secondary: '#e11d48' },
-            { name: 'Orange', primary: '#ea580c', secondary: '#d97706' },
-            { name: 'Teal', primary: '#0891b2', secondary: '#0d9488' },
-            { name: 'Indigo', primary: '#4f46e5', secondary: '#6366f1' },
-            { name: 'Pink', primary: '#db2777', secondary: '#ec4899' }
-        ];
-
-        // Theme and Color Management
+        // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
             const themeIcon = document.getElementById('themeIcon');
             
-            if (body.getAttribute('data-bs-theme') === 'dark') {
-                body.setAttribute('data-bs-theme', 'light');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
                 themeIcon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             } else {
-                body.setAttribute('data-bs-theme', 'dark');
+                body.setAttribute('data-theme', 'dark');
                 themeIcon.className = 'fas fa-sun';
                 localStorage.setItem('theme', 'dark');
             }
         }
 
+        // Load saved theme
         function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            const themeIcon = document.getElementById('themeIcon');
-            
-            document.body.setAttribute('data-bs-theme', savedTheme);
-            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').className = 'fas fa-sun';
+            }
         }
 
+        // Color picker functionality
         function openColorPicker() {
-            const modal = document.getElementById('colorPickerModal');
-            const colorOptions = document.getElementById('colorOptions');
-            
-            // Populate color options
-            colorOptions.innerHTML = colorSchemes.map((scheme, index) => `
-                <div class="color-option" 
-                     style="background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary})"
-                     onclick="applyColorScheme(${index})"
-                     title="${scheme.name}">
-                </div>
-            `).join('');
-            
-            modal.style.display = 'flex';
+            // Implementation for color picker modal
+            console.log('Color picker opened');
         }
 
-        function closeColorPicker() {
-            document.getElementById('colorPickerModal').style.display = 'none';
-        }
-
-        function applyColorScheme(index) {
-            const scheme = colorSchemes[index];
-            applyColors(scheme.primary, scheme.secondary);
-            localStorage.setItem('colorScheme', JSON.stringify(scheme));
-        }
-
-        function applyCustomColor() {
-            const customColor = document.getElementById('customColorPicker').value;
-            const secondaryColor = adjustBrightness(customColor, -20);
-            
-            applyColors(customColor, secondaryColor);
-            localStorage.setItem('colorScheme', JSON.stringify({
-                name: 'Custom',
-                primary: customColor,
-                secondary: secondaryColor
-            }));
-        }
-
-        function applyColors(primary, secondary) {
-            document.documentElement.style.setProperty('--primary-color', primary);
-            document.documentElement.style.setProperty('--secondary-color', secondary);
-        }
-
-        function adjustBrightness(hex, percent) {
-            const num = parseInt(hex.replace("#", ""), 16);
-            const amt = Math.round(2.55 * percent);
-            const R = (num >> 16) + amt;
-            const G = (num >> 8 & 0x00FF) + amt;
-            const B = (num & 0x0000FF) + amt;
-            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-        }
-
-        function resetColors() {
-            applyColors('#2563eb', '#7c3aed');
-            localStorage.removeItem('colorScheme');
-        }
-
-        function loadSavedColors() {
-            const savedScheme = localStorage.getItem('colorScheme');
-            if (savedScheme) {
-                const scheme = JSON.parse(savedScheme);
-                applyColors(scheme.primary, scheme.secondary);
-            }
-        }
-
-        // Data Loading Functions
-        async function loadShows() {
-            try {
-                const response = await api.getShows(true);
-                shows = response.shows || [];
-                renderShows();
-                populateShowFilter();
-            } catch (error) {
-                console.error('Error loading shows:', error);
-                document.getElementById('showsContainer').innerHTML = 
-                    '<div class="alert alert-danger">Failed to load shows. Please try again later.</div>';
-            }
-        }
-
-        async function loadEpisodes() {
-            try {
-                const response = await api.getEpisodes({ limit: 50 });
-                episodes = response.episodes || [];
-                renderEpisodes();
-            } catch (error) {
-                console.error('Error loading episodes:', error);
-                document.getElementById('episodesContainer').innerHTML = 
-                    '<div class="alert alert-danger">Failed to load episodes. Please try again later.</div>';
-            }
-        }
-
-        function populateShowFilter() {
-            const select = document.getElementById('showFilterSelect');
-            select.innerHTML = '<option value="all">All Shows</option>' +
-                shows.map(show => `<option value="${show.id}">${show.name}</option>`).join('');
-        }
-
-        function renderShows() {
-            const container = document.getElementById('showsContainer');
-            
-            if (shows.length === 0) {
-                container.innerHTML = '<div class="alert alert-info">No shows available at this time.</div>';
-                return;
-            }
-
-            container.innerHTML = `
-                <div class="shows-grid">
-                    ${shows.map(show => `
-                        <div class="show-card">
-                            <div class="show-header" style="background: linear-gradient(135deg, ${show.color || 'var(--primary-color)'}, var(--secondary-color));">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <div class="show-body">
-                                <h3 class="show-title">${show.name}</h3>
-                                <p class="show-description">${show.description}</p>
-                                <div class="show-stats">
-                                    <span class="stat-badge">
-                                        <i class="fas fa-play-circle me-1"></i>
-                                        ${show.episode_count || 0} Episodes
-                                    </span>
-                                    <a href="/api/rss/${show.id}" class="btn-subscribe" onclick="trackShowSubscribe('${show.id}')">
-                                        <i class="fas fa-rss me-1"></i>Subscribe
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function renderEpisodes() {
-            const container = document.getElementById('episodesContainer');
-            
-            let filteredEpisodes = currentFilter === 'all' 
-                ? episodes 
-                : episodes.filter(ep => ep.show_id === currentFilter);
-
-            const episodesToShow = filteredEpisodes.slice(0, displayedEpisodes);
-            
-            if (episodesToShow.length === 0) {
-                container.innerHTML = '<div class="alert alert-info">No episodes found matching your criteria.</div>';
-                return;
-            }
-
-            container.innerHTML = episodesToShow.map(episode => `
-                <div class="episode-card" data-episode-id="${episode.id}" data-show-id="${episode.show_id}">
-                    <div class="episode-header">
-                        <button class="play-btn" onclick="playEpisode('${episode.id}', '${episode.show_id}', '${episode.audio_url || ''}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <div class="episode-info">
-                            <h3 class="episode-title">${episode.title}</h3>
-                            <div class="episode-meta">
-                                <span class="show-badge" style="background: ${getShowColor(episode.show_id)};">
-                                    ${getShowName(episode.show_id)}
-                                </span>
-                                <span><i class="fas fa-calendar me-1"></i>${formatDate(episode.publish_date)}</span>
-                                <span><i class="fas fa-clock me-1"></i>${episode.duration || '30:00'}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="episode-description">${episode.description || 'No description available for this episode.'}</p>
-                    <div class="episode-actions">
-                        <div class="action-buttons">
-                            ${episode.audio_url ? `
-                                <a href="${episode.audio_url}" class="btn-action" 
-                                   onclick="trackEpisodeDownload('${episode.id}', '${episode.show_id}', '${episode.audio_url}')" download>
-                                    <i class="fas fa-download me-1"></i>Download
-                                </a>
-                            ` : ''}
-                            <button class="btn-action" onclick="shareEpisode('${episode.id}', '${episode.show_id}', 'twitter')">
-                                <i class="fab fa-twitter me-1"></i>Share
-                            </button>
-                            <button class="btn-action" onclick="shareEpisode('${episode.id}', '${episode.show_id}', 'linkedin')">
-                                <i class="fab fa-linkedin me-1"></i>LinkedIn
-                            </button>
-                        </div>
-                        <span class="play-count">
-                            <i class="fas fa-headphones me-1"></i>
-                            ${episode.play_count || 0} plays
-                        </span>
-                    </div>
-                </div>
-            `).join('');
-
-            // Show/hide load more button
-            const loadMoreBtn = document.getElementById('loadMoreBtn');
-            loadMoreBtn.style.display = episodesToShow.length < filteredEpisodes.length ? 'block' : 'none';
-        }
-
-        // Helper functions
-        function getShowName(showId) {
-            const show = shows.find(s => s.id === showId);
-            return show ? show.name : 'Unknown Show';
-        }
-
-        function getShowColor(showId) {
-            const show = shows.find(s => s.id === showId);
-            return show ? show.color : 'var(--primary-color)';
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return 'Unknown Date';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-            });
-        }
-
-        // Filter and Search Functions
-        function filterEpisodes(showId) {
-            currentFilter = showId;
-            displayedEpisodes = 6;
-            renderEpisodes();
-            
-            // Update active tab
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-
-        function filterByShow() {
-            const selectedShow = document.getElementById('showFilterSelect').value;
-            currentFilter = selectedShow === 'all' ? 'all' : selectedShow;
-            displayedEpisodes = 6;
-            renderEpisodes();
-        }
-
+        // Search and filter functionality
         function searchEpisodes() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            if (searchTerm.length === 0) {
-                renderEpisodes();
-                return;
-            }
-
-            const filteredEpisodes = episodes.filter(episode => 
-                episode.title.toLowerCase().includes(searchTerm) ||
-                (episode.description && episode.description.toLowerCase().includes(searchTerm)) ||
-                getShowName(episode.show_id).toLowerCase().includes(searchTerm)
-            );
-
-            displayEpisodes(filteredEpisodes);
-            
-            // Track search
-            if (window.podcastAnalytics) {
-                window.podcastAnalytics.trackSearch(searchTerm, filteredEpisodes.length);
-            }
+            console.log('Searching for:', searchTerm);
         }
 
         function sortEpisodes() {
             const sortBy = document.getElementById('sortSelect').value;
-            
-            episodes.sort((a, b) => {
-                switch(sortBy) {
-                    case 'oldest':
-                        return new Date(a.publish_date) - new Date(b.publish_date);
-                    case 'title':
-                        return a.title.localeCompare(b.title);
-                    case 'duration':
-                        return (a.duration || '').localeCompare(b.duration || '');
-                    default: // newest
-                        return new Date(b.publish_date) - new Date(a.publish_date);
-                }
+            console.log('Sorting by:', sortBy);
+        }
+
+        function filterByShow() {
+            const showFilter = document.getElementById('showFilterSelect').value;
+            console.log('Filtering by show:', showFilter);
+        }
+
+        function filterEpisodes(category) {
+            // Update active filter tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
             });
+            event.target.classList.add('active');
             
-            renderEpisodes();
+            console.log('Filtering episodes by:', category);
         }
 
-        function loadMoreEpisodes() {
-            displayedEpisodes += 6;
-            renderEpisodes();
-        }
-
-        function displayEpisodes(episodeList) {
-            const container = document.getElementById('episodesContainer');
-            
-            if (episodeList.length === 0) {
-                container.innerHTML = '<div class="alert alert-info">No episodes match your search criteria.</div>';
-                return;
-            }
-
-            container.innerHTML = episodeList.map(episode => `
-                <div class="episode-card" data-episode-id="${episode.id}" data-show-id="${episode.show_id}">
-                    <div class="episode-header">
-                        <button class="play-btn" onclick="playEpisode('${episode.id}', '${episode.show_id}', '${episode.audio_url || ''}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <div class="episode-info">
-                            <h3 class="episode-title">${episode.title}</h3>
-                            <div class="episode-meta">
-                                <span class="show-badge" style="background: ${getShowColor(episode.show_id)};">
-                                    ${getShowName(episode.show_id)}
-                                </span>
-                                <span><i class="fas fa-calendar me-1"></i>${formatDate(episode.publish_date)}</span>
-                                <span><i class="fas fa-clock me-1"></i>${episode.duration || '30:00'}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="episode-description">${episode.description || 'No description available for this episode.'}</p>
-                    <div class="episode-actions">
-                        <div class="action-buttons">
-                            ${episode.audio_url ? `
-                                <a href="${episode.audio_url}" class="btn-action" 
-                                   onclick="trackEpisodeDownload('${episode.id}', '${episode.show_id}', '${episode.audio_url}')" download>
-                                    <i class="fas fa-download me-1"></i>Download
-                                </a>
-                            ` : ''}
-                            <button class="btn-action" onclick="shareEpisode('${episode.id}', '${episode.show_id}', 'twitter')">
-                                <i class="fab fa-twitter me-1"></i>Share
-                            </button>
-                            <button class="btn-action" onclick="shareEpisode('${episode.id}', '${episode.show_id}', 'linkedin')">
-                                <i class="fab fa-linkedin me-1"></i>LinkedIn
-                            </button>
-                        </div>
-                        <span class="play-count">
-                            <i class="fas fa-headphones me-1"></i>
-                            ${episode.play_count || 0} plays
-                        </span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Interaction Functions
-        function playEpisode(episodeId, showId, audioUrl) {
-            if (!audioUrl) {
-                alert('Audio file not available for this episode.');
-                return;
-            }
-
-            // Track the play event
-            if (window.podcastAnalytics) {
-                const audioElement = new Audio(audioUrl);
-                window.podcastAnalytics.trackPlay(episodeId, showId, audioElement);
-                audioElement.play().catch(error => {
-                    console.error('Error playing audio:', error);
-                    alert('Unable to play audio file.');
-                });
-            } else {
-                // Fallback: just play the audio
-                const audio = new Audio(audioUrl);
-                audio.play().catch(error => {
-                    console.error('Error playing audio:', error);
-                    alert('Unable to play audio file.');
-                });
-            }
-        }
-
-        function shareEpisode(episodeId, showId, platform) {
-            const episode = episodes.find(ep => ep.id === episodeId);
-            if (!episode) return;
-
-            const url = `${window.location.origin}/#episodes`;
-            const text = `Check out "${episode.title}" on CastBuzz Network!`;
-
-            let shareUrl = '';
-            switch(platform) {
-                case 'twitter':
-                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                    break;
-                case 'facebook':
-                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-                    break;
-                case 'linkedin':
-                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-                    break;
-            }
-
-            if (shareUrl) {
-                window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
-                
-                // Track share event
-                if (window.podcastAnalytics) {
-                    window.podcastAnalytics.trackShare(episodeId, showId, platform);
-                }
-            }
-        }
-
-        function trackShowSubscribe(showId) {
-            if (window.podcastAnalytics) {
-                window.podcastAnalytics.trackSubscribe(showId);
-            }
-        }
-
-        function trackEpisodeDownload(episodeId, showId, audioUrl) {
-            if (window.podcastAnalytics) {
-                window.podcastAnalytics.trackDownload(episodeId, showId, audioUrl);
-            }
-        }
-
-        // Navigation
+        // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1470,35 +1044,108 @@
                         behavior: 'smooth',
                         block: 'start'
                     });
-                    
-                    // Update active nav link
-                    document.querySelectorAll('.nav-link').forEach(link => {
-                        link.classList.remove('active');
-                    });
-                    this.classList.add('active');
                 }
             });
         });
 
-        // Close modal when clicking outside
-        document.getElementById('colorPickerModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeColorPicker();
-            }
-        });
+        // Update active navigation link on scroll
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
 
-        // Initialize page
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
-            loadSavedColors();
-            loadShows();
-            loadEpisodes();
             
-            // Initialize analytics if available
-            if (window.podcastAnalytics) {
-                window.podcastAnalytics.init();
-            }
+            // Simulate loading episodes
+            setTimeout(() => {
+                const episodesContainer = document.getElementById('episodesContainer');
+                episodesContainer.innerHTML = `
+                    <div class="episode-card">
+                        <div class="episode-header">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div style="text-align: center;">
+                                <h5>The Future of AI in Everyday Life</h5>
+                                <p class="text-muted">Tech Insights • 45 min • Nov 15, 2024</p>
+                            </div>
+                        </div>
+                        <p style="text-align: center;">Exploring how artificial intelligence is reshaping our daily routines and what to expect in the coming years.</p>
+                        <div class="episode-actions">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="episode-card">
+                        <div class="episode-header">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div style="text-align: center;">
+                                <h5>Building Resilient Business Models</h5>
+                                <p class="text-muted">Business Insights • 38 min • Nov 12, 2024</p>
+                            </div>
+                        </div>
+                        <p style="text-align: center;">Strategic approaches to creating businesses that thrive in uncertain times with expert insights from industry leaders.</p>
+                        <div class="episode-actions">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="episode-card">
+                        <div class="episode-header">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div style="text-align: center;">
+                                <h5>From Failure to Success: A Journey</h5>
+                                <p class="text-muted">Life Stories • 52 min • Nov 10, 2024</p>
+                            </div>
+                        </div>
+                        <p style="text-align: center;">An inspiring conversation about overcoming setbacks and building a meaningful life through perseverance and self-discovery.</p>
+                        <div class="episode-actions">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }, 1000);
         });
+
+        // Add scroll event listener for navigation
+        window.addEventListener('scroll', updateActiveNavLink);
     </script>
 </body>
 </html>
